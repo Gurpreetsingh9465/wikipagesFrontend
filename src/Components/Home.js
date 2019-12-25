@@ -43,10 +43,14 @@ class Home extends React.Component {
 
     render() {
         const { width } = this.state;
-        const isMobile = width <= 600;
+        const isMobile = width <= 700;
         return(
-            <Container style={{ width:isMobile?'100%':'60vw', height: '1800px'}}>
-                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'55vh'} />:<LoadingElement number={1} width={isMobile?'100%':'55vh'} />}
+            <Container >
+                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
+                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
+                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
+                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
+                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
             </Container>
         );
     }
