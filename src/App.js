@@ -1,26 +1,51 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Switch, Route, BrowserRouter } from "react-router-dom";
+import Header from './Components/Header';
+import { ClientUrls } from './utils/Urls';
+import Home from './Components/Home';
+import Bookmark from './Components/Bookmark';
+import Profile from './Components/Profile';
+import Publish from './Components/Publish';
+import Stats from './Components/Stats';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state ={
+      user : {
+        name: 'Gurpreet Singh',
+        id: 'amansingh9569',
+        image: 'default.png'
+      }
+  }};
+  render() {
+    return (
+      <BrowserRouter>
+        <Header user={this.state.user} isLogin={false}/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <Switch>
+          <Route exact path={ClientUrls.home}>
+            <Home/>
+          </Route>
+          <Route exact path={ClientUrls.bookmarks}>
+            <Bookmark/>
+          </Route>
+          <Route exact path={ClientUrls.profile}>
+            <Profile/>
+          </Route>
+          <Route exact path={ClientUrls.stats}>
+            <Stats/>
+          </Route>
+          <Route exact path={ClientUrls.publish}>
+            <Publish/>
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    )};
 }
 
 export default App;
