@@ -2,6 +2,7 @@ import React from 'react';
 import LoadingElement from './UIelements/LoadingElement';
 import { Container } from '@material-ui/core';
 import Element from './UIelements/Element';
+import PropTypes from 'prop-types';
 
 const element = {
     image : 'https://www.adorama.com/alc/wp-content/uploads/2019/07/nathan-lee-allen-landscape-feature-825x465.jpg',
@@ -19,41 +20,35 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            width: window.innerWidth,
             isLoaded: false
         };
     }
     
     componentDidMount() {
-        window.addEventListener('resize', this.handleWindowSizeChange);
         setTimeout(()=>{
             this.setState({
                 isLoaded: true
             })
         },5000)
     }
-    
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.handleWindowSizeChange);
-    }
-    
-    handleWindowSizeChange = () => {
-        this.setState({ width: window.innerWidth });
-    };
 
     render() {
-        const { width } = this.state;
-        const isMobile = width <= 700;
+        const isMobile = this.props.isMobile;
         return(
-            <Container >
-                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
-                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
-                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
-                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
-                {this.state.isLoaded?<Element {...element} width={isMobile?'100%':'50%'} />:<LoadingElement number={1} width={isMobile?'100%':'50%'} />}
+            <Container maxWidth={isMobile?'md':'sm'} >
+                {this.state.isLoaded?<Element {...element} />:<LoadingElement number={1}  />}
+                {this.state.isLoaded?<Element {...element} />:<LoadingElement number={1}  />}
+                {this.state.isLoaded?<Element {...element} />:<LoadingElement number={1}  />}
+                {this.state.isLoaded?<Element {...element} />:<LoadingElement number={1}  />}
+                {this.state.isLoaded?<Element {...element} />:<LoadingElement number={1}  />}
+                {this.state.isLoaded?<Element {...element} />:<LoadingElement number={1}  />}
             </Container>
         );
     }
+}
+
+Home.propTypes = {
+    isMobile: PropTypes.bool.isRequired,
 }
 
 export default Home;

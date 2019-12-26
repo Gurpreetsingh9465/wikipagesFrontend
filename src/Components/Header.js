@@ -3,6 +3,7 @@ import { Container, FormControl, TextField, Divider, Grid, Menu, MenuItem, Input
 import { Search as SearchIcon, KeyboardBackspace as KeyboardBackspaceIcon, Close as CloseIcon, MailOutline as MailOutlineIcon } from "@material-ui/icons";
 import { withStyles, fade } from "@material-ui/core/styles";
 import { ClientUrls } from '../utils/Urls';
+import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import PasswordInput from './UIelements/PasswordInput';
 
@@ -138,7 +139,6 @@ class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      width: window.innerWidth,
       loginDialogEnable: false,
       searchDialogEnable: false,
       showPassword: false,
@@ -151,18 +151,6 @@ class Header extends React.Component {
     this.setState({
       showPassword: !this.state.showPassword
     });
-  };
-
-  componentDidMount = () => {
-    window.addEventListener('resize', this.handleWindowSizeChange);
-  }
-  
-  componentWillUnmount = () => {
-    window.removeEventListener('resize', this.handleWindowSizeChange);
-  }
-  
-  handleWindowSizeChange = () => {
-    this.setState({ width: window.innerWidth });
   };
 
   handleClick = event => {
@@ -362,9 +350,8 @@ class Header extends React.Component {
   }
 
   render() {
-    const { width } = this.state;
     const { classes } = this.props;
-    const isMobile = width <= 600;
+    const isMobile = this.props.isMobile;
     const open = Boolean(this.state.anchor);
     return(
       <div>
@@ -454,6 +441,10 @@ class Header extends React.Component {
       </div>
     );
   }
+}
+
+Header.propTypes = {
+  isMobile: PropTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(Header);
