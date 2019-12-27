@@ -8,6 +8,8 @@ import Bookmark from './Components/Bookmark';
 import Profile from './Components/Profile';
 import Publish from './Components/Publish';
 import Stats from './Components/Stats';
+import BlogView from './Components/BlogView';
+import UserView from './Components/UserView';
 
 class App extends React.Component {
   constructor() {
@@ -59,6 +61,18 @@ class App extends React.Component {
           <Route exact path={ClientUrls.publish}>
             <Publish isMobile={isMobile}/>
           </Route>
+          <Route exact path={ClientUrls.view}
+           render={(routeProps)=>{
+             return(
+               <BlogView isMobile={isMobile} {...routeProps}/>
+           )}}
+          />
+          <Route exact path={ClientUrls.userView}
+           render={(routeProps)=>{
+             return(
+               <UserView isMobile={isMobile} {...routeProps}/>
+           )}}
+          />
         </Switch>
       </BrowserRouter>
     )};

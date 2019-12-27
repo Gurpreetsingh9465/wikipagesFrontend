@@ -13,10 +13,12 @@ const element = {
     name : 'Gurpreet Singh',
     id : 'amansingh9569',
     time : '2019-12-25T08:25:36',
-    title: 'How to make a react app'
+    title: 'How-to make a react app',
+    blogId: '6187ahsa81hs1bja81',
 }
 
 class Home extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -29,7 +31,7 @@ class Home extends React.Component {
             this.setState({
                 isLoaded: true
             })
-        },5000)
+        },200)
     }
 
     render() {

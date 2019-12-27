@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, withStyles, Grid, Avatar, Typography } from '@material-ui/core';
+import { Link as RouterLink } from 'react-router-dom';
+import { ClientUrls, urlMapper } from '../../utils/Urls';
 
 const nFormatter = (num, digits) => {
     let si = [
@@ -62,16 +64,20 @@ class Element extends React.Component {
         return(
             <Box width={this.props.width}>
                 <Grid container>
-                    <Grid item xs={2} md={1}>
+                    <Grid 
+                    component={RouterLink} 
+                    to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
+                    item xs={2} md={1}>
                         <Avatar alt={this.props.name} src={this.props.user} className={classes.image}/>
                     </Grid>
                     <Grid item xs={6} md={9} >
                         <Typography>
                         {this.props.name}<span> </span>
-                        {isMobile?null:<span 
+                        {isMobile?null:<RouterLink
+                        to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
                         style={{color:'#757575', textDecoration:'underline'}}>
                         @{this.props.id}
-                        </span>}</Typography>
+                        </RouterLink>}</Typography>
                         <Typography
                         style={{color:'#757575'}}>
                             {this.dateTime}
@@ -94,15 +100,24 @@ class Element extends React.Component {
                     </Grid>
                 </Grid>
                 <br/>
-                <img
-                    src={this.props.image}
-                    alt={this.props.title}
-                    width='100%'
-                    height={150}
-                />
-                <Box pt={0.5}>
+                <Box
+                component={RouterLink}
+                style={{ textDecoration: 'none' }} 
+                to={urlMapper({
+                    user: this.props.id,
+                    id: this.props.blogId,
+                    title: this.props.title,
+                }, ClientUrls.view)} 
+                pt={0.5}>
+                    <img
+                        src={this.props.image}
+                        alt={this.props.title}
+                        width='100%'
+                        height={150}
+                    />
                     <Typography style={{
-                        fontWeight:800
+                        fontWeight:800,
+                        color: '#000' 
                     }} 
                     variant="h6">
                     {this.props.title}
@@ -128,6 +143,7 @@ Element.propTypes = {
     name: PropTypes.string,
     id: PropTypes.string,
     time: PropTypes.string,
+    blogId: PropTypes.string,
 };
 
 Element.defaultProps = {
@@ -141,6 +157,7 @@ Element.defaultProps = {
     name: 'User Name',
     id: 'username',
     time: 0,
+    blogId: 'undef',
 };
 
 export default withStyles(styles)(Element);

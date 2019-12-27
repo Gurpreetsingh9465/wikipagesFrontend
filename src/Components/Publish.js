@@ -5,6 +5,7 @@ import './assets/css/rotate.css';
 import PropTypes from 'prop-types';
 
 class Publish extends React.Component {
+    
     constructor(props) {
         super(props);
         this.state = {
@@ -12,6 +13,7 @@ class Publish extends React.Component {
             checked: false
         }
     }
+
     toggle = () => {
         if(this.state.rotateClass === 'rotateClock') {
             this.setState({
@@ -39,7 +41,7 @@ class Publish extends React.Component {
             paddingLeft:'0',
             paddingRight:'0'
         }
-        const isMobile = this.props.isMobile;
+        // const isMobile = this.props.isMobile;
         return(
             <Container maxWidth='md'>
                 <p aria-label="ctrl+s" style={{color:'#757575'}}>Whatever You write will saved in draft</p>
