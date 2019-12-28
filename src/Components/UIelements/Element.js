@@ -72,7 +72,8 @@ class Element extends React.Component {
                         <Avatar alt={this.props.name} src={this.props.user} className={classes.image}/>
                     </Grid>
                     <Grid item xs={6} md={9} >
-                        <Typography>
+                        <Typography
+                        variant={isMobile?'body2':'body1'}>
                         {this.props.name}<span> </span>
                         {isMobile?null:<RouterLink
                         to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
@@ -80,23 +81,24 @@ class Element extends React.Component {
                         @{this.props.id}
                         </RouterLink>}</Typography>
                         <Typography
+                        variant={isMobile?'body2':'body1'}
                         style={{color: Colors.grey}}>
                             {this.dateTime}
                         </Typography>
                     </Grid>
                     <Grid item xs={4} md={2}>
                         <Typography
+                        variant={isMobile?'body2':'body1'}
                         style={{
                             fontWeight: 400,
                             color: Colors.grey,
-                            fontSize: '15px'
                         }}>
                         { nFormatter(this.props.views,1) + ' views'}</Typography>
                         <Typography
+                        variant={isMobile?'body2':'body1'}
                         style={{
                             fontWeight: 400,
                             color: Colors.grey,
-                            fontSize: '15px'
                         }}>{ nFormatter(this.props.likes,1) + ' likes'}</Typography>
                     </Grid>
                 </Grid>
@@ -123,7 +125,9 @@ class Element extends React.Component {
                     variant="h6">
                     {this.props.title}
                     </Typography>
-                    <Typography style={{color: Colors.grey}}>
+                    <Typography
+                    variant={isMobile?'body2':'body1'}
+                    style={{color: Colors.grey}}>
                         {this.props.text}
                     </Typography>
                 </Box>

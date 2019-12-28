@@ -4,6 +4,13 @@ import { Container, CircularProgress } from '@material-ui/core';
 import Renderer from './UIelements/Renderer';
 import { Colors } from '../utils/Colors';
 import Blog from './Seed';
+const user = {
+    user : '/default.png',
+    name : 'Gurpreet Singh',
+    id : 'amansingh9569',
+    time : '2019-12-25T08:25:36',
+    title: 'How To Make a React App',
+} 
 
 class BlogView extends React.Component {
 
@@ -24,17 +31,20 @@ class BlogView extends React.Component {
     }
 
     render() {
-        // const isMobile = this.props.isMobile;
+        const isMobile = this.props.isMobile;
         return(
-            <Container align={this.state.isLoaded?'':"center"} maxWidth='md' >
-                {!this.state.isLoaded?<CircularProgress
-                style={{
-                    color: Colors.green
-                }}
-                />:(
-                        <Renderer blog={Blog} />
-                    )
-                }
+            <Container style={{
+                maxWidth: '720px',
+            }} 
+            align={this.state.isLoaded?'':"center"} >
+            {!this.state.isLoaded?<CircularProgress
+            style={{
+                color: Colors.green
+            }}
+            />:(
+                    <Renderer {...user} isMobile={isMobile} blog={Blog} />
+                )
+            }
             </Container>
         );
     }
