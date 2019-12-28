@@ -4,12 +4,19 @@ import PropTypes from 'prop-types';
 class Renderer extends React.Component {
 
     constructor(props) {
-        super(props)
+        super(props);
+        console.log(props.blog);
+    }
+
+    render() {
+        return (
+            <p>as</p>
+        );
     }
 
 }
 
-Renderer.prototype = {
+Renderer.propType = {
     blog: PropTypes.object.isRequired
 }
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, withStyles, Grid, Avatar, Typography } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
 import { ClientUrls, urlMapper } from '../../utils/Urls';
+import { Colors } from '../../utils/Colors';
 
 const nFormatter = (num, digits) => {
     let si = [
@@ -75,11 +76,11 @@ class Element extends React.Component {
                         {this.props.name}<span> </span>
                         {isMobile?null:<RouterLink
                         to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
-                        style={{color:'#757575', textDecoration:'underline'}}>
+                        style={{color: Colors.grey, textDecoration:'underline'}}>
                         @{this.props.id}
                         </RouterLink>}</Typography>
                         <Typography
-                        style={{color:'#757575'}}>
+                        style={{color: Colors.grey}}>
                             {this.dateTime}
                         </Typography>
                     </Grid>
@@ -87,14 +88,14 @@ class Element extends React.Component {
                         <Typography
                         style={{
                             fontWeight: 400,
-                            color: '#7E7E7E',
+                            color: Colors.grey,
                             fontSize: '15px'
                         }}>
                         { nFormatter(this.props.views,1) + ' views'}</Typography>
                         <Typography
                         style={{
                             fontWeight: 400,
-                            color: '#7E7E7E',
+                            color: Colors.grey,
                             fontSize: '15px'
                         }}>{ nFormatter(this.props.likes,1) + ' likes'}</Typography>
                     </Grid>
@@ -117,12 +118,12 @@ class Element extends React.Component {
                     />
                     <Typography style={{
                         fontWeight:800,
-                        color: '#000' 
+                        color: Colors.black 
                     }} 
                     variant="h6">
                     {this.props.title}
                     </Typography>
-                    <Typography style={{color:'#7E7E7E'}}>
+                    <Typography style={{color: Colors.grey}}>
                         {this.props.text}
                     </Typography>
                 </Box>

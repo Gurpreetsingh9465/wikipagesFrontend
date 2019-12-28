@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, TextField, IconButton, Grid, Grow } from '@material-ui/core';
 import { AddCircleOutline as AddCircleIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
 import './assets/css/rotate.css';
+import { Colors } from '../utils/Colors';
 import PropTypes from 'prop-types';
 
 class Publish extends React.Component {
@@ -44,7 +45,7 @@ class Publish extends React.Component {
         // const isMobile = this.props.isMobile;
         return(
             <Container maxWidth='md'>
-                <p aria-label="ctrl+s" style={{color:'#757575'}}>Whatever You write will saved in draft</p>
+                <p style={{color: Colors.grey}}>Whatever You write will saved in draft</p>
                 <TextField
                 placeholder="Title"
                 size='medium'

@@ -6,6 +6,7 @@ import { ClientUrls } from '../utils/Urls';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import PasswordInput from './UIelements/PasswordInput';
+import { Colors } from '../utils/Colors';
 
 const styles = theme => ({
   root: {
@@ -51,8 +52,8 @@ const styles = theme => ({
     color: theme.palette.grey[500],
   },
   appBar: {
-    boxShadow: '0px 2px #F6F6F6',
-    backgroundColor: '#fff'
+    boxShadow: '0px 2px '+Colors.shadow,
+    backgroundColor: Colors.white
   },
   search: {
     position: 'relative',
@@ -76,16 +77,16 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color:'#000',
+    color: Colors.black,
   },
   searchIconMobile: {
     marginRight: theme.spacing(2),
     width: theme.spacing(3),
     height: theme.spacing(3),
-    color:'#000'
+    color: Colors.black
   },
   inputRoot: {
-    color: 'black',
+    color: Colors.black,
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 7),
@@ -112,9 +113,9 @@ function HideOnScroll(props) {
 
 const StyledMenu = withStyles({
   paper: {
-    borderLeft: '1px solid #d3d4d5',
-    borderRight: '1px solid #d3d4d5',
-    borderBottom: '1px solid #d3d4d5',
+    borderLeft: '1px solid '+Colors.lightGrey,
+    borderRight: '1px solid '+Colors.lightGrey,
+    borderBottom: '1px solid '+Colors.lightGrey,
     marginTop: '17px',
     borderRadius: '10px'
   },
@@ -219,7 +220,7 @@ class Header extends React.Component {
             <Typography display="block" align="center" variant="h5">
               Join WikiPages.in
             </Typography>
-            <p style={{color:'#757575'}}>
+            <p style={{color: Colors.grey}}>
               "There is nothing to writing. All you do is sit down at a typewriter and bleed." ― Ernest Hemingway
             </p>
           </DialogTitle>
@@ -247,7 +248,7 @@ class Header extends React.Component {
             <Typography display="block" align="center" variant="h5">
               Join WikiPages.in
             </Typography>
-            <p style={{color:'#757575'}}>
+            <p style={{color: Colors.grey}}>
               "There is nothing to writing. All you do is sit down at a typewriter and bleed." ― Ernest Hemingway
             </p>
           </DialogTitle>
@@ -268,7 +269,7 @@ class Header extends React.Component {
             </Button>
           </DialogContent>
           <DialogContent align="center">
-            <p style={{color:'#c2c2c2'}}>
+            <p style={{color: Colors.lightGrey}}>
               <span>To make WikiPages.in work, we log user data and share it with service providers. Click "Sign Up" above to accept our </span>
               <Link href="#" style={{textDecoration: 'underline'}} color="inherit" onClick={(e)=>{e.preventDefault()}}>Terms and Privacy Policy</Link>.
             </p>
@@ -284,7 +285,7 @@ class Header extends React.Component {
             <IconButton disableRipple aria-label="close" className={classes.closeButton} onClick={this.handleCloseLoginDialog}>
               <CloseIcon />
             </IconButton>
-            <p style={{color:'#757575'}}>
+            <p style={{color: Colors.grey}}>
               "There is nothing to writing. All you do is sit down at a typewriter and bleed." ― Ernest Hemingway
             </p>
           </DialogTitle>
@@ -316,7 +317,7 @@ class Header extends React.Component {
             }}>Sign in</Link></p>
           </DialogContent>
           <DialogContent align="center">
-            <p style={{color:'#c2c2c2'}}>
+            <p style={{color: Colors.lightGrey}}>
               <span>To make WikiPages.in work, we log user data and share it with service providers. Click "Sign Up" above to accept our </span>
               <Link href="#" style={{textDecoration: 'underline'}} color="inherit" onClick={(e)=>{e.preventDefault()}}>Terms and Privacy Policy</Link>.
             </p>
@@ -387,7 +388,7 @@ class Header extends React.Component {
                     </Grid>
                     <Grid item xs={9}>
                       <p style={{marginBottom:'1px'}}>{this.props.user.name}</p>
-                      <p style={{color:'#757575', marginTop:'1px', textDecoration:'underline'}}>@{this.props.user.id}</p>
+                      <p style={{color: Colors.grey, marginTop:'1px', textDecoration:'underline'}}>@{this.props.user.id}</p>
                     </Grid>
                   </Grid>
                   <Divider />
