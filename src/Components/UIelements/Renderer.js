@@ -1,16 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const createTag = (tagName, tagAttribute, child) => {
+    let element = '<'+tagName+' ';
+    Object.entries(tagAttribute).forEach(([key,value])=>{
+        element+=(key+'={'+value+'} ');
+    });
+    element+=('>'+child);
+    element+=('<'+tagName+'/>');
+    return element;
+}
+
 class Renderer extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(props.blog);
+        this.ui = [];
+    }
+
+    componentDidMount() {
+        Object.entries(this.props.blog).forEach(([key,value])=>{
+            this.ui.push(createTag(key,{},value));
+        });
+        console.log(this.ui)
     }
 
     render() {
         return (
-            <p>as</p>
+            <div>
+                {this.ui}
+            </div>
         );
     }
 
