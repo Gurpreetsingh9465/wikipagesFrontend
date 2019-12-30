@@ -5,7 +5,10 @@ import { Colors } from '../../utils/Colors';
 
 const styles = theme => ({
     typography: {
-        fontSize: '18px'
+        fontSize: '16px',
+        '@media(min-width:600px)': {
+            fontSize: '18px'
+        }
     },
     italic: {
         fontStyle: 'italic'
@@ -35,24 +38,23 @@ class Text extends React.Component {
     getElement(classes) {
         let element = [];
         this.props.textList.forEach((ele, index) => {
-            if(ele.type === 'body1') {
-                element.push((
-                    <span key={this.generateKey(index)} className={classes[ele.type]}>
-                        {ele.value+' '}
-                    </span>
-                ));
-            } else if(ele.type === 'bold' || ele.type === 'italic') {
-                element.push((
-                    <span key={this.generateKey(index)} className={classes[ele.type]}>
-                        {ele.value+' '}
-                    </span>
-                ))
-            } else if(ele.type === 'link') {
+            if(ele.type === 'link') {
                 element.push((
                     <a target='_blank' rel="noopener noreferrer" href={ele.src} key={this.generateKey(index)} className={classes[ele.type]}>
                         {ele.value+' '}
                     </a>
-                ))
+                ));
+            } else {
+                let arr = ele.type.split(' ');
+                let appliedClasses = ''
+                arr.forEach((c)=>{
+                    appliedClasses+=(classes[c]+' ');
+                });
+                element.push((
+                    <span key={this.generateKey(index)} className={appliedClasses}>
+                        {ele.value+' '}
+                    </span>
+                ));
             }
         });
         return element;

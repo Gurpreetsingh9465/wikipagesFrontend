@@ -20,6 +20,20 @@ const styles = theme => ({
         '@media (min-width:600px)': {
           fontSize: '40px',
         },
+    },
+    heading: {
+        fontSize: '24px',
+        fontWeight: 700,
+        '@media (min-width:600px)': {
+          fontSize: '34px',
+        },
+    },
+    subHeading: {
+        fontSize: '20px',
+        fontWeight: 500,
+        '@media (min-width:600px)': {
+          fontSize: '30px',
+        },
     }
 });
 
@@ -61,28 +75,46 @@ const createTag = (tagName, tagAttribute, child, key, classes) => {
                 </div>
             );
         case('video'):
-                return (
-                    <div key={key}>
-                        <VideoViewer title={key} {...tagAttribute} />
-                    </div>
-                );
+            return (
+                <div key={key}>
+                    <VideoViewer title={key} {...tagAttribute} />
+                </div>
+            );
         case('code'):
-                return (
-                    <div key={key}>
-                        <pre
-                        style={{
-                            overflow: 'scroll',
-                            width: '100%',
-                            margin: '0rem 0rem 1.5rem 0',
-                            backgroundColor: Colors.shadow,
-                            border: '0',
-                            fontSize: '16px'
-                        }}
-                        className="prettyprint">
+            return (
+                <div key={key}>
+                    <pre
+                    style={{
+                        overflow: 'scroll',
+                        width: '100%',
+                        margin: '0.5rem 0rem 1.5rem 0',
+                        backgroundColor: Colors.shadow,
+                        border: '0',
+                        fontSize: '16px'
+                    }}
+                    className="prettyprint">
+                    {child}
+                    </pre>
+                </div>
+            );
+        case('heading'):
+            return (
+                <div key={key}>
+                    <Typography
+                    className={classes.heading}>
                         {child}
-                        </pre>
-                    </div>
-                )
+                    </Typography>
+                </div>
+            )
+        case('subHeading'):
+            return (
+                <div key={key}>
+                    <Typography
+                    className={classes.subHeading}>
+                        {child}
+                    </Typography>
+                </div>
+            )
         default:
             return ;
     }

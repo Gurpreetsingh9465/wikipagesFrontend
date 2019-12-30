@@ -15,7 +15,7 @@ export default {
                 value: `It’s a drawing challenge "developed by fellow illustrator", Jake Parker in 2009. Every October, artists and art-enthusiasts around the world create an ink drawing daily for the month, sharing their work each day online with the #Inktober hashtags.
                 Sounds pretty easy, right? I mean c’mon, we’re all creatives here. How hard can it be to carve out a few minutes to draw a lil’`
             }, {
-                type: 'bold',
+                type: 'bold italic',
                 value: `something each day?`
             }, {
                 type: 'link',
@@ -39,11 +39,43 @@ export default {
     typography1: {
         child: [
             {
-                type: 'body1',
+                type: 'bold italic',
                 value: `Welp, it turns out it’s very hard. I remember not too long ago when I struggled so much with drawing consistently. I wanted to be drawing every day. I desperately wanted to. I knew I should be, and I told myself I would, over and over. But somehow, the hours and then the days would slip by and I wouldn’t draw a single line.
                 I’d get busy with all the other things I had to do. I’d get overwhelmed not knowing what to draw. I’d be afraid I would draw something terrible and end up feeling worse. But a lot of times, I’d just choose not to draw because it was easier. I’ll do it tomorrow…
                 Inktober was the kick in the butt I needed. I forget now exactly which year it was, but the year I found out about Inktober marked a major shift in my drawing output. I saw a tweet about it and thought, “Yes! This is what I need! This will give me the motivation and accountability to actually draw every day!”
                 Developing a Drawing Habit`
+            }
+        ]
+    },
+    typography15: {
+        child: [
+            {
+                type: 'body1',
+                value: `1. How we are building`
+            }
+        ]
+    },
+    typography16: {
+        child: [
+            {
+                type: 'body1',
+                value: `2. Code`
+            }
+        ]
+    },
+    typography17: {
+        child: [
+            {
+                type: 'body1',
+                value: `3. Coffeee`
+            }
+        ]
+    },
+    typography18: {
+        child: [
+            {
+                type: 'body1',
+                value: `4. Hard Work`
             }
         ]
     },
@@ -63,6 +95,9 @@ export default {
         }]
     },
     enter5: {},
+    heading0: {
+        child: 'Codes'
+    },
     code: {
         child: `def fun(fun2):
     fun2()
@@ -71,6 +106,9 @@ def test():
 fun(test)`
     },
     break0: {},
+    subHeading0: {
+        child: 'React Code'
+    },
     code2: {
         child: `class CodePrettyComponent extends Component {
     static getHeadOrBody() {
