@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, TextField, IconButton, Grid, Grow } from '@material-ui/core';
-import { AddCircleOutline as AddCircleIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
+import { AddCircleOutline as AddCircleIcon, Code as CodeIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
 import './assets/css/rotate.css';
 import { Colors } from '../utils/Colors';
 import PropTypes from 'prop-types';
@@ -68,7 +68,7 @@ class Publish extends React.Component {
                         </IconButton>
                         <Grow in={this.state.checked}>
                             <IconButton
-                            title="Add YouTube Video" 
+                            title="Add YouTube, Vimeo Video" 
                             style={buttonStyle} 
                             disableRipple >
                                 <PlayIcon fontSize='large'/>
@@ -88,6 +88,14 @@ class Publish extends React.Component {
                             style={buttonStyle} 
                             disableRipple >
                                 <HorizIcon fontSize='large'/>
+                            </IconButton>
+                        </Grow>
+                        <Grow in={this.state.checked}>
+                            <IconButton
+                            title="Add Code"
+                            style={buttonStyle} 
+                            disableRipple >
+                                <CodeIcon fontSize='large'/>
                             </IconButton>
                         </Grow>
                     </Grid>

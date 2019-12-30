@@ -34,7 +34,7 @@ class BlogView extends React.Component {
         const isMobile = this.props.isMobile;
         return(
             <Container style={{
-                maxWidth: '720px',
+                maxWidth: '800px',
             }} 
             align={this.state.isLoaded?'':"center"} >
             {!this.state.isLoaded?<CircularProgress

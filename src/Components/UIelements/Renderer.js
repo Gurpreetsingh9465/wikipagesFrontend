@@ -1,22 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Grid, Avatar, withStyles, Container } from '@material-ui/core';
+import { Typography, Grid, Avatar, withStyles, Container, Box } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
 import { urlMapper, ClientUrls } from '../../utils/Urls';
 import { Colors } from '../../utils/Colors';
 import { MoreHoriz as MoreHorizIcon } from '@material-ui/icons';
 import ImageViewer from './ImageViewer';
+import VideoViewer from './VideoViewer';
+import Text from './Text';
 
 const styles = theme => ({
     image: {
         width: theme.spacing(5),
         height: theme.spacing(5),
-    },
-    typography: {
-        fontSize: '16px',
-        '@media (min-width:600px)': {
-          fontSize: '20px',
-        },
     },
     horizonDot: {
         fontSize: '30px',
@@ -37,12 +33,14 @@ const createTag = (tagName, tagAttribute, child, key, classes) => {
         case('typography'):
             return(
                 <div key={key}>
-                    <Typography
-                    className={classes.typography}
-                    {...tagAttribute} >
-                        {child}
-                    </Typography>
+                    <Text textList={child} />
                 </div>
+            );
+        case('quote'):
+            return(
+                <Box align='center' key={key}>
+                    <Text textList={child} />
+                </Box>
             );
         case('img'):
             return(
@@ -62,6 +60,29 @@ const createTag = (tagName, tagAttribute, child, key, classes) => {
                     <br/>
                 </div>
             );
+        case('video'):
+                return (
+                    <div key={key}>
+                        <VideoViewer title={key} {...tagAttribute} />
+                    </div>
+                );
+        case('code'):
+                return (
+                    <div key={key}>
+                        <pre
+                        style={{
+                            overflow: 'scroll',
+                            width: '100%',
+                            margin: '0rem 0rem 1.5rem 0',
+                            backgroundColor: Colors.shadow,
+                            border: '0',
+                            fontSize: '16px'
+                        }}
+                        className="prettyprint">
+                        {child}
+                        </pre>
+                    </div>
+                )
         default:
             return ;
     }
@@ -76,6 +97,7 @@ class Renderer extends React.Component {
         };
         let dateTime = new Date(Date.parse(props.time));
         this.dateTime =  months[dateTime.getMonth()]+' '+dateTime.getDate()+', ' + dateTime.getFullYear();
+        this.runCodePrettify();
     }
 
     componentDidMount() { 
@@ -88,6 +110,15 @@ class Renderer extends React.Component {
         this.setState({
             ui: ui
         });
+    }
+
+    runCodePrettify() {
+        let script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+    
+        script.src = 'https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?skin=default';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
     }
 
     render() {
@@ -122,13 +153,6 @@ class Renderer extends React.Component {
                         style={{color: Colors.grey}}>
                             {this.dateTime}
                         </Typography>
-                    </Grid>
-                    <Grid item xs={2} sm={1}>
-                        {/* <Button size='small' variant="outlined" style={{
-                            color: Colors.green,
-                            textTransform: 'none',
-                            marginRight: '5%'
-                        }} >Follow</Button> */}
                     </Grid>
                 </Grid>
                 <Container align='center'>

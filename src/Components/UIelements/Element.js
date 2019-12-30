@@ -4,6 +4,7 @@ import { Box, withStyles, Grid, Avatar, Typography } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
 import { ClientUrls, urlMapper } from '../../utils/Urls';
 import { Colors } from '../../utils/Colors';
+import ImageViewer from './ImageViewer';
 
 const nFormatter = (num, digits) => {
     let si = [
@@ -112,11 +113,10 @@ class Element extends React.Component {
                     title: this.props.title,
                 }, ClientUrls.view)} 
                 pt={0.5}>
-                    <img
-                        src={this.props.image}
-                        alt={this.props.title}
-                        width='100%'
-                        height={150}
+                    <ImageViewer
+                    src={this.props.image}
+                    title={this.props.title}
+                    height={150}
                     />
                     <Typography style={{
                         fontWeight:800,

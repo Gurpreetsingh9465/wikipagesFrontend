@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { Switch, Route, BrowserRouter } from "react-router-dom";
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
 import Header from './Components/Header';
 import { ClientUrls } from './utils/Urls';
 import Home from './Components/Home';
@@ -10,6 +11,12 @@ import Publish from './Components/Publish';
 import Stats from './Components/Stats';
 import BlogView from './Components/BlogView';
 import UserView from './Components/UserView';
+
+const THEME = createMuiTheme({
+  typography: {
+   "fontFamily": '"Raleway", sans-serif',
+  }
+});
 
 class App extends React.Component {
   constructor() {
@@ -39,42 +46,44 @@ class App extends React.Component {
     const { width } = this.state;
     const isMobile = width <= 600;
     return (
-      <BrowserRouter>
-        <Header isMobile={isMobile} user={this.state.user} isLogin={false}/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <Switch>
-          <Route exact path={ClientUrls.home}>
-            <Home isMobile={isMobile} />
-          </Route>
-          <Route exact path={ClientUrls.bookmarks}>
-            <Bookmark/>
-          </Route>
-          <Route exact path={ClientUrls.profile}>
-            <Profile/>
-          </Route>
-          <Route exact path={ClientUrls.stats}>
-            <Stats/>
-          </Route>
-          <Route exact path={ClientUrls.publish}>
-            <Publish isMobile={isMobile}/>
-          </Route>
-          <Route exact path={ClientUrls.view}
-           render={(routeProps)=>{
-             return(
-               <BlogView isMobile={isMobile} {...routeProps}/>
-           )}}
-          />
-          <Route exact path={ClientUrls.userView}
-           render={(routeProps)=>{
-             return(
-               <UserView isMobile={isMobile} {...routeProps}/>
-           )}}
-          />
-        </Switch>
-      </BrowserRouter>
+      <MuiThemeProvider theme={THEME}>
+        <BrowserRouter>
+          <Header isMobile={isMobile} user={this.state.user} isLogin={false}/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <Switch>
+            <Route exact path={ClientUrls.home}>
+              <Home isMobile={isMobile} />
+            </Route>
+            <Route exact path={ClientUrls.bookmarks}>
+              <Bookmark/>
+            </Route>
+            <Route exact path={ClientUrls.profile}>
+              <Profile/>
+            </Route>
+            <Route exact path={ClientUrls.stats}>
+              <Stats/>
+            </Route>
+            <Route exact path={ClientUrls.publish}>
+              <Publish isMobile={isMobile}/>
+            </Route>
+            <Route exact path={ClientUrls.view}
+            render={(routeProps)=>{
+              return(
+                <BlogView isMobile={isMobile} {...routeProps}/>
+            )}}
+            />
+            <Route exact path={ClientUrls.userView}
+            render={(routeProps)=>{
+              return(
+                <UserView isMobile={isMobile} {...routeProps}/>
+            )}}
+            />
+          </Switch>
+        </BrowserRouter>
+      </MuiThemeProvider>
     )};
 }
 
