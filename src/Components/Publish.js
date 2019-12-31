@@ -1,48 +1,33 @@
 import React from 'react';
-import { Container, TextField, IconButton, Grid, Grow } from '@material-ui/core';
-import { AddCircleOutline as AddCircleIcon, Code as CodeIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
-import './assets/css/rotate.css';
+import { Container, TextField, Grid } from '@material-ui/core';
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
+import { Code as CodeIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
 import { Colors } from '../utils/Colors';
 import PropTypes from 'prop-types';
+
 
 class Publish extends React.Component {
     
     constructor(props) {
         super(props);
         this.state = {
-            rotateClass: '',
-            checked: false
+            open: false,
         }
     }
 
-    toggle = () => {
-        if(this.state.rotateClass === 'rotateClock') {
-            this.setState({
-                checked: false,
-                rotateClass: 'rotateAntiClock'
-            });
-        } else {
-            this.setState({
-                checked: true,
-                rotateClass: 'rotateClock'
-            });
-        }
-    }
-
-    closeToggle = () => {
+    handleOpen = () => {
         this.setState({
-            checked: false,
-            rotateClass: this.state.rotateClass===''?'':'rotateAntiClock',
+            open: true
+        }); 
+    }
+
+    handleClose = () => {
+        this.setState({
+            open: false
         });
     }
 
     render() {
-        const buttonStyle = {
-            backgroundColor: 'transparent',
-            paddingLeft:'0',
-            paddingRight:'0'
-        }
-        // const isMobile = this.props.isMobile;
         return(
             <Container maxWidth='md'>
                 <p style={{color: Colors.grey}}>Whatever You write will saved in draft</p>
@@ -56,48 +41,36 @@ class Publish extends React.Component {
                 }}
                 />
                 <Grid container spacing={0}>
-                    <Grid style={{maxWidth:'min-content'}} item xs={2} sm={1}>
-                        <IconButton
-                        title="Add Image, Video etc.."
-                        className={this.state.rotateClass} 
-                        onClick={this.toggle} 
-                        style={buttonStyle} 
-                        disableRipple >
-                            <AddCircleIcon  
-                            fontSize='large'/>
-                        </IconButton>
-                        <Grow in={this.state.checked}>
-                            <IconButton
-                            title="Add YouTube, Vimeo Video" 
-                            style={buttonStyle} 
-                            disableRipple >
-                                <PlayIcon fontSize='large'/>
-                            </IconButton>
-                        </Grow>
-                        <Grow in={this.state.checked}>
-                            <IconButton
-                            title="Add Image"
-                            style={buttonStyle} 
-                            disableRipple >
-                                <WallpaperIcon fontSize='large'/>
-                            </IconButton>
-                        </Grow>
-                        <Grow in={this.state.checked}>
-                            <IconButton
-                            title="Add Break Point"
-                            style={buttonStyle} 
-                            disableRipple >
-                                <HorizIcon fontSize='large'/>
-                            </IconButton>
-                        </Grow>
-                        <Grow in={this.state.checked}>
-                            <IconButton
-                            title="Add Code"
-                            style={buttonStyle} 
-                            disableRipple >
-                                <CodeIcon fontSize='large'/>
-                            </IconButton>
-                        </Grow>
+                    <Grid item xs={2} sm={1}>
+                    <SpeedDial
+                    ariaLabel="Add Image, Video etc.."
+                    icon={<SpeedDialIcon fontSize='small' />}
+                    onClose={this.handleClose}
+                    onOpen={this.handleOpen}
+                    open={this.state.open}
+                    direction='down'
+                    >
+                    <SpeedDialAction
+                        icon={<PlayIcon/>}
+                        tooltipTitle="Add YouTube, Vimeo Video"
+                        onClick={this.handleClose}
+                    />
+                    <SpeedDialAction
+                        icon={<WallpaperIcon/>}
+                        tooltipTitle="Add Image"
+                        onClick={this.handleClose}
+                    />
+                    <SpeedDialAction
+                        icon={<HorizIcon/>}
+                        tooltipTitle="Add Break Point"
+                        onClick={this.handleClose}
+                    />
+                    <SpeedDialAction
+                        icon={<CodeIcon/>}
+                        tooltipTitle="Add Code"
+                        onClick={this.handleClose}
+                    />
+                    </SpeedDial>
                     </Grid>
                     <Grid item xs={10} sm={11}>
                         <TextField

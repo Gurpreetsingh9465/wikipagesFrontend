@@ -48,7 +48,7 @@ class App extends React.Component {
     return (
       <MuiThemeProvider theme={THEME}>
         <BrowserRouter>
-          <Header isMobile={isMobile} user={this.state.user} isLogin={false}/>
+          <Header isMobile={isMobile} user={this.state.user} isLogin={true}/>
           <br/>
           <br/>
           <br/>
