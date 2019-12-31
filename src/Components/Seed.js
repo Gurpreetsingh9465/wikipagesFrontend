@@ -1,11 +1,14 @@
-export default {
-    img1: {
-        attributes: {
-            caption: 'adorable view',
-            src: 'https://oyster.ignimgs.com/wordpress/stg.ign.com/2017/10/horizon-4K.jpg'    
+export default [
+    [
+        'img',
+        {
+            attributes: {
+                caption: 'adorable view',
+                src: 'https://oyster.ignimgs.com/wordpress/stg.ign.com/2017/10/horizon-4K.jpg'    
+            }
         }
-    },
-    typography0: {
+    ],
+    ['typography', {
         child: [
             {
                 type: 'italic',
@@ -23,20 +26,20 @@ export default {
                 value: 'Pop Hit 2019'
             }
         ]
-    },
-    video0: {
+    }],
+    ['video', {
         attributes: {
             caption: 'Best Song',
             src: 'https://www.youtube.com/watch?v=ERMRWk1bwqo'    
         }
-    },
-    video1: {
+    }],
+    ['video', {
         attributes: {
             caption: 'Sample Video',
             src: 'https://vimeo.com/9011932'
         }
-    },
-    typography1: {
+    }],
+    ['typography', {
         child: [
             {
                 type: 'bold italic',
@@ -46,70 +49,70 @@ export default {
                 Developing a Drawing Habit`
             }
         ]
-    },
-    typography15: {
+    }],
+    ['typography', {
         child: [
             {
                 type: 'body1',
                 value: `1. How we are building`
             }
         ]
-    },
-    typography16: {
+    }],
+    ['typography', {
         child: [
             {
                 type: 'body1',
                 value: `2. Code`
             }
         ]
-    },
-    typography17: {
+    }],
+    ['typography', {
         child: [
             {
                 type: 'body1',
                 value: `3. Coffeee`
             }
         ]
-    },
-    typography18: {
+    }],
+    ['typography', {
         child: [
             {
                 type: 'body1',
                 value: `4. Hard Work`
             }
         ]
-    },
-    enter1: {},
-    quote: {
+    }],
+    ['enter', {}],
+    ['quote', {
         child: [
             {type: 'bold',
             value: `"If You Are Good At Something, Never Do it For free"`
         }]
-    },
-    break5: {},
-    typography2: {
+    }],
+    ['break', {}],
+    ['typography', {
         child: [
             {type: 'body1',
             value: ` And surprisingly, it did. Did I draw every single day that first Inktober? No. I missed a couple days in the beginning. It wasn’t perfect. But having the ongoing motivation, and knowing that I was supposed to be posting on Instagram each day, made me jump back on the drawing wagon way quicker than I had before. All in all, I only missed a few days. It was more than I had ever drawn. But more importantly, it was the most consistent I had ever drawn.
             A funny thing happened while I was going through that first monthly challenge. I started to want to draw each day. Once I had gotten over the hump of the first week or so, and had dragged myself to my sketchbook for days in a row, something clicked in my brain that made me start to crave drawing. I no longer had to work as hard to convince myself to draw. I just wanted to.`
         }]
-    },
-    enter5: {},
-    heading0: {
+    }],
+    ['enter', {}],
+    ['heading', {
         child: 'Codes'
-    },
-    code: {
+    }],
+    ['code', {
         child: `def fun(fun2):
     fun2()
 def test():
     print('hello world')
 fun(test)`
-    },
-    break0: {},
-    subHeading0: {
+    }],
+    ['break', {}],
+    ['subHeading', {
         child: 'React Code'
-    },
-    code2: {
+    }],
+    ['code', {
         child: `class CodePrettyComponent extends Component {
     static getHeadOrBody() {
         return document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0];
@@ -152,5 +155,5 @@ fun(test)`
         );
     };
     };`
-    }
-}
+    }]
+]
