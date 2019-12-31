@@ -1,13 +1,24 @@
 import React from 'react';
-import { Container, TextField, Grid, withStyles } from '@material-ui/core';
+import { Container, TextareaAutosize, Typography, IconButton, TextField, Slide, Grid, withStyles, DialogTitle, Button, Dialog, DialogActions, DialogContent, AppBar, Toolbar } from '@material-ui/core';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
-import { Code as CodeIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
+import { Code as CodeIcon, Close as CloseIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
 import { Colors } from '../utils/Colors';
 import PropTypes from 'prop-types';
 import * as elements from './UIelements/GetBlogElements';
 import { createTag } from './UIelements/createTag';
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const styles = theme => ({
+    appBar: {
+        position: 'relative',
+    },
+    title: {
+        marginLeft: theme.spacing(2),
+        flex: 1,
+    },
     horizonDot: {
         fontSize: '30px',
         color: Colors.green,
@@ -28,7 +39,12 @@ const styles = theme => ({
         '@media (min-width:600px)': {
           fontSize: '30px',
         },
-    }
+    },
+    codeArea: {
+        width: '100%',
+        border: 0,
+        outline: 'none'
+    },
 });
 
 class Publish extends React.Component {
@@ -38,9 +54,55 @@ class Publish extends React.Component {
         this.state = {
             open: false,
             blog: [],
-            ui: []
+            ui: [],
+            videoDialog: false,
+            codeDialog: false,
+            videoLink: '',
+            caption: '',
+            code: '',
+            videoLinkError: false
         }
         this.runCodePrettify();
+    }
+
+    handleOpenCodeDialog = () => {
+        this.setState({
+            codeDialog: true
+        });
+    }
+
+    handleCloseCodeDialog = () => {
+        this.setState({
+            codeDialog: false,
+            code: ''
+        });
+    }
+
+    addCode = () => {
+        let blog = this.state.blog;
+        blog.push(elements.getCode(this.state.code));
+        this.setState({
+            blog: blog,
+            ui: this.getUpdatedUi(blog),
+            code: '',
+            codeDialog: false
+        });
+        this.runCodePrettify();
+    }
+
+    handleOpenVideoDialog = () => {
+        this.setState({
+            videoDialog: true
+        });
+    }
+
+    handleCloseVideoDialog = () => {
+        this.setState({
+            videoDialog: false,
+            videoLinkError: false,
+            videoLink: '',
+            caption: ''
+        });
     }
 
     runCodePrettify() {
@@ -71,6 +133,12 @@ class Publish extends React.Component {
         return ui;
     }
 
+    onChange = (e) => {
+        this.setState({
+            [e.target.id]: e.target.value
+        });
+    }
+
     addBreakPoint = () => {
         let blog = this.state.blog;
         blog.push(elements.getBreakPoint());
@@ -80,19 +148,86 @@ class Publish extends React.Component {
         });
     }
 
-    addVideo = (src, caption=undefined) => {
-        let blog = this.state.blog;
-        blog.push(elements.getVideo(src, caption));
-        this.setState({
-            blog: blog,
-            ui: this.getUpdatedUi(blog)
-        });
+    addVideo = () => {
+        if(this.state.videoLink.includes('vimeo') || this.state.videoLink.includes('youtube')) {
+            let blog = this.state.blog;
+            blog.push(elements.getVideo(this.state.videoLink, this.state.caption));
+            this.setState({
+                blog: blog,
+                ui: this.getUpdatedUi(blog),
+                videoLink: '',
+                caption: '',
+                videoDialog: false,
+                videoLinkError: false
+            });
+        } else {
+            this.setState({
+                videoLinkError: true
+            });
+        }
     }
 
     render() {
         const { classes } = this.props;
         return(
             <Container maxWidth='md'>
+                <Dialog id='video' open={this.state.videoDialog} onClose={this.handleCloseVideoDialog}>
+                    <DialogTitle>
+                        Paste Video URL from Youtube/Vimeo
+                    </DialogTitle>
+                    <DialogContent>
+                    <TextField
+                        error={this.state.videoLinkError}
+                        autoFocus
+                        id="videoLink"
+                        margin="dense"
+                        onChange={this.onChange}
+                        label="Video URL"
+                        fullWidth
+                        helperText={this.state.videoLinkError?'Invalid URL':''}
+                    />
+                    <TextField
+                        id="caption"
+                        onChange={this.onChange}
+                        margin="dense"
+                        label="Caption"
+                        fullWidth
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={this.handleCloseVideoDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={this.addVideo} color="primary">
+                        Add Video
+                    </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog fullScreen open={this.state.codeDialog} onClose={this.handleCloseCodeDialog} TransitionComponent={Transition}>
+                    <AppBar className={classes.appBar}>
+                        <Toolbar>
+                            <IconButton edge="start" color="inherit" onClick={this.handleCloseCodeDialog} aria-label="close">
+                            <CloseIcon />
+                            </IconButton>
+                            <Typography variant="h6" className={classes.title}>
+                            Enter Your Code
+                            </Typography>
+                            <Button autoFocus color="inherit" onClick={this.addCode}>
+                            Add Code
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                    <DialogContent style={{margin:'0.2rem'}} >
+                        <TextareaAutosize
+                        autoFocus
+                        rowsMin={30}
+                        placeholder="Code"
+                        id='code'
+                        className={classes.codeArea}
+                        onChange={this.onChange}
+                        />
+                    </DialogContent>
+                </Dialog>
                 <p style={{color: Colors.grey}}>Press Ctrl+s To save in draft</p>
                 <TextField
                 placeholder="Title"
@@ -119,7 +254,7 @@ class Publish extends React.Component {
                         <SpeedDialAction
                             icon={<PlayIcon/>}
                             tooltipTitle="Add YouTube, Vimeo Video"
-                            onClick={this.handleClose}
+                            onClick={this.handleOpenVideoDialog}
                         />
                         <SpeedDialAction
                             icon={<WallpaperIcon/>}
@@ -134,7 +269,7 @@ class Publish extends React.Component {
                         <SpeedDialAction
                             icon={<CodeIcon/>}
                             tooltipTitle="Add Code"
-                            onClick={this.handleClose}
+                            onClick={this.handleOpenCodeDialog}
                         />
                         </SpeedDial>
                     </Grid>
@@ -151,21 +286,6 @@ class Publish extends React.Component {
                         }}
                         />
                     </Grid>
-                    <TextField
-                    placeholder="Paste Video Link from Youtube/Vimeo And Press Enter"
-                    fullWidth
-                    size='medium'
-                    margin="normal"
-                    onKeyDown = {(e)=>{
-                        if (e.key === 'Enter') {
-                            this.addVideo(e.target.value);
-                        }
-                    }}
-                    style={{marginLeft:'5px'}}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    />
                 </Grid>
             </Container>
         );

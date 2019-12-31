@@ -14,7 +14,7 @@ import UserView from './Components/UserView';
 
 const THEME = createMuiTheme({
   typography: {
-   "fontFamily": "'Alegreya', serif",
+   "fontFamily": "'Nunito', sans-serif",
   }
 });
 

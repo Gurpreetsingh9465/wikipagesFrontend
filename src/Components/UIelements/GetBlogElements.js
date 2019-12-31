@@ -24,3 +24,9 @@ export const getVideo = (src, caption = undefined) => {
         }]
     );
 }
+
+export const getCode = (code) => {
+    return(['code', {
+        child: code
+    }]);
+}
