@@ -6,47 +6,47 @@ import { Colors } from '../../utils/Colors';
 import VideoViewer from './VideoViewer';
 import Text from './Text';
 
-export const createTag = (tagName, tagAttribute, child, key, classes) => {
+export const createTag = (tagName, tagAttribute, child, key, classes, onClick = (key)=>{}) => {
     switch(tagName) {
         case('typography'):
             return(
-                <div key={key}>
+                <Box onClick={()=>{onClick(key)}} key={key}>
                     <Text textList={child} />
-                </div>
+                </Box>
             );
         case('quote'):
             return(
-                <Box align='center' key={key}>
+                <Box onClick={()=>{onClick(key)}} align='center' key={key}>
                     <Text textList={child} />
                 </Box>
             );
         case('img'):
             return(
-                <div key={key}>
+                <Box onClick={()=>{onClick(key)}} key={key}>
                     <ImageViewer {...tagAttribute} />
-                </div>
+                </Box>
             );
         case('break'):
             return(
-                <Container align='center' key={key}>
+                <Container onClick={()=>{onClick(key)}} align='center' key={key}>
                     <MoreHorizIcon className={classes.horizonDot} />
                 </Container>
             );
         case('enter'):
             return (
-                <div key={key}>
+                <Box onClick={()=>{onClick(key)}} key={key}>
                     <br/>
-                </div>
+                </Box>
             );
         case('video'):
             return (
-                <div key={key}>
+                <Box onClick={()=>{onClick(key)}} key={key}>
                     <VideoViewer title={key} {...tagAttribute} />
-                </div>
+                </Box>
             );
         case('code'):
             return (
-                <div key={key}>
+                <Box onClick={()=>{onClick(key)}} key={key}>
                     <pre
                     style={{
                         overflow: 'scroll',
@@ -59,25 +59,25 @@ export const createTag = (tagName, tagAttribute, child, key, classes) => {
                     className="prettyprint">
                     {child}
                     </pre>
-                </div>
+                </Box>
             );
         case('heading'):
             return (
-                <div key={key}>
+                <Box onClick={()=>{onClick(key)}} key={key}>
                     <Typography
                     className={classes.heading}>
                         {child}
                     </Typography>
-                </div>
+                </Box>
             )
         case('subHeading'):
             return (
-                <div key={key}>
+                <Box onClick={()=>{onClick(key)}} key={key}>
                     <Typography
                     className={classes.subHeading}>
                         {child}
                     </Typography>
-                </div>
+                </Box>
             )
         default:
             return ;

@@ -62,13 +62,27 @@ class Publish extends React.Component {
             code: '',
             videoLinkError: false
         }
-        this.runCodePrettify();
+    }
+
+    componentDidMount() {
+        this.fileSelector = React.createRef();
+    }
+
+    handleFileChange = (e) => {
+        if(e.target.files.length > 0) {
+            this.addImage(URL.createObjectURL(e.target.files[0]))
+        }
     }
 
     handleOpenCodeDialog = () => {
         this.setState({
             codeDialog: true
         });
+    }
+
+    handleFileSelect = (e) => {
+        e.preventDefault();
+        this.fileSelector.current.click();
     }
 
     handleCloseCodeDialog = () => {
@@ -88,6 +102,15 @@ class Publish extends React.Component {
             codeDialog: false
         });
         this.runCodePrettify();
+    }
+
+    addImage = (src) => {
+        let blog = this.state.blog;
+        blog.push(elements.getImage(src));
+        this.setState({
+            blog: blog,
+            ui: this.getUpdatedUi(blog),
+        });
     }
 
     handleOpenVideoDialog = () => {
@@ -124,11 +147,29 @@ class Publish extends React.Component {
             open: false
         });
     }
+    
+    deleteEntry = (key) => {
+        let blog = this.state.blog;
+        blog.splice(key,1);
+        this.setState({
+            blog: blog,
+            ui: this.getUpdatedUi(blog),
+        })
+    }
+
+    clickEvent = (key) => {
+        this.deleteEntry(key);
+    }
 
     getUpdatedUi = (blog) => {
         let ui =[];
         blog.forEach((value, key) => {
-            ui.push(createTag(value[0], value[1].attributes, value[1].child, key, this.props.classes));
+            ui.push(createTag(value[0], 
+                value[1].attributes, 
+                value[1].child, 
+                key, 
+                this.props.classes, 
+                this.clickEvent));
         });
         return ui;
     }
@@ -171,6 +212,12 @@ class Publish extends React.Component {
         const { classes } = this.props;
         return(
             <Container maxWidth='md'>
+                <input 
+                style={{display: 'none'}} 
+                type='file' 
+                ref={this.fileSelector} 
+                onChange={this.handleFileChange}
+                accept='image/png, image/jpg, image/jpeg, image/gif' />
                 <Dialog id='video' open={this.state.videoDialog} onClose={this.handleCloseVideoDialog}>
                     <DialogTitle>
                         Paste Video URL from Youtube/Vimeo
@@ -259,7 +306,7 @@ class Publish extends React.Component {
                         <SpeedDialAction
                             icon={<WallpaperIcon/>}
                             tooltipTitle="Add Image"
-                            onClick={this.handleClose}
+                            onClick={this.handleFileSelect}
                         />
                         <SpeedDialAction
                             icon={<HorizIcon/>}
