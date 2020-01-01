@@ -11,12 +11,24 @@ class ImageViewer extends React.Component {
         this.state = {
             isLoaded: false,
             width: window.innerWidth,
+            imageWidth: ''
         }
+        this.image = React.createRef();
     }
 
     handleLoad = () => {
+        let width = '100%';
+        let aspectRatio = this.image.current.height/this.image.current.width;
+        if(aspectRatio <= 0.8) {
+            width = '100%'
+        } else if(aspectRatio > 0.8 && aspectRatio <= 1.2) {
+            width = '70%'
+        } else {
+            width = '50%'
+        }
         this.setState({
-            isLoaded: true
+            isLoaded: true,
+            imageWidth: width
         })
     }
 
@@ -36,15 +48,16 @@ class ImageViewer extends React.Component {
         const { width } = this.state;
         const isMobile = width <= 600;
         return(
-            <Box>
+            <Box align='center'>
                 <Skeleton 
                 style={{display: this.state.isLoaded?'none':''}}
                 variant="rect" 
                 height={this.props.height?this.props.height:isMobile?240:350} />
                 <img 
-                style={{display: !this.state.isLoaded?'none':''}}
+                style={{display: !this.state.isLoaded?'none':'', maxHeight:'800px'}}
                 onLoad={this.handleLoad}
-                width='100%'
+                width={isMobile?'100%':this.state.imageWidth}
+                ref={this.image}
                 height={this.props.height}
                 src={this.props.src}
                 alt={this.props.title?this.props.title:this.props.caption}/>
