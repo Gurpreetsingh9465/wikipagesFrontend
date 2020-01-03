@@ -6,47 +6,47 @@ import { Colors } from '../../utils/Colors';
 import VideoViewer from './VideoViewer';
 import Text from './Text';
 
-export const createTag = (tagName, tagAttribute, child, key, classes, onClick = (key)=>{}) => {
+export const createTag = (tagName, tagAttribute, child, key, classes, onClick = (key)=>{}, overlay = false) => {
     switch(tagName) {
         case('typography'):
             return(
-                <Box onClick={()=>{onClick(key)}} key={key}>
+                <Box onClick={(e)=>{onClick(e, key)}} key={key}>
                     <Text textList={child} />
                 </Box>
             );
         case('quote'):
             return(
-                <Box onClick={()=>{onClick(key)}} align='center' key={key}>
+                <Box onClick={(e)=>{onClick(e, key)}} align='center' key={key}>
                     <Text textList={child} />
                 </Box>
             );
         case('img'):
             return(
-                <Box onClick={()=>{onClick(key)}} key={key}>
+                <Box onClick={(e)=>{onClick(e, key)}} key={key}>
                     <ImageViewer {...tagAttribute} />
                 </Box>
             );
         case('break'):
             return(
-                <Container onClick={()=>{onClick(key)}} align='center' key={key}>
+                <Container onClick={(e)=>{onClick(e, key)}} align='center' key={key}>
                     <MoreHorizIcon className={classes.horizonDot} />
                 </Container>
             );
         case('enter'):
             return (
-                <Box onClick={()=>{onClick(key)}} key={key}>
+                <Box onClick={(e)=>{onClick(e, key)}} key={key}>
                     <br/>
                 </Box>
             );
         case('video'):
             return (
-                <Box onClick={()=>{onClick(key)}} key={key}>
-                    <VideoViewer title={key} {...tagAttribute} />
+                <Box key={key}>
+                    <VideoViewer overlay={overlay} onClick={(e)=>{onClick(e, key)}} title={key} {...tagAttribute} />
                 </Box>
             );
         case('code'):
             return (
-                <Box onClick={()=>{onClick(key)}} key={key}>
+                <Box onClick={(e)=>{onClick(e, key)}} key={key}>
                     <pre
                     style={{
                         overflow: 'scroll',
@@ -63,7 +63,7 @@ export const createTag = (tagName, tagAttribute, child, key, classes, onClick = 
             );
         case('heading'):
             return (
-                <Box onClick={()=>{onClick(key)}} key={key}>
+                <Box onClick={(e)=>{onClick(e, key)}} key={key}>
                     <Typography
                     className={classes.heading}>
                         {child}
@@ -72,7 +72,7 @@ export const createTag = (tagName, tagAttribute, child, key, classes, onClick = 
             )
         case('subHeading'):
             return (
-                <Box onClick={()=>{onClick(key)}} key={key}>
+                <Box onClick={(e)=>{onClick(e, key)}} key={key}>
                     <Typography
                     className={classes.subHeading}>
                         {child}

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, TextareaAutosize, Typography, IconButton, TextField, Slide, Grid, withStyles, DialogTitle, Button, Dialog, DialogActions, DialogContent, AppBar, Toolbar } from '@material-ui/core';
+import { Container, TextareaAutosize, Popover, Typography, IconButton, TextField, Slide, Grid, withStyles, DialogTitle, Button, Dialog, DialogActions, DialogContent, AppBar, Toolbar } from '@material-ui/core';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
-import { Code as CodeIcon, Close as CloseIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon } from '@material-ui/icons';
+import { Code as CodeIcon, Close as CloseIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { Colors } from '../utils/Colors';
 import PropTypes from 'prop-types';
 import * as elements from './UIelements/GetBlogElements';
@@ -54,6 +54,9 @@ class Publish extends React.Component {
         this.state = {
             open: false,
             blog: [],
+            anchor: null,
+            selected: -1,
+            popoverDialog: false,
             ui: [],
             videoDialog: false,
             codeDialog: false,
@@ -66,7 +69,18 @@ class Publish extends React.Component {
 
     componentDidMount() {
         this.fileSelector = React.createRef();
+        // document.addEventListener("keydown", this._handleKeyDown);
     }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this._handleKeyDown);
+    }
+
+    // _handleKeyDown = (e) => {
+    //     if(this.state.selected !== -1 && (e.key === 'Backspace' || e.key === 'Delete')) {
+    //         this.deleteEntry(this.state.selected);
+    //     }
+    // }
 
     handleFileChange = (e) => {
         if(e.target.files.length > 0) {
@@ -148,17 +162,34 @@ class Publish extends React.Component {
         });
     }
     
-    deleteEntry = (key) => {
-        let blog = this.state.blog;
-        blog.splice(key,1);
-        this.setState({
-            blog: blog,
-            ui: this.getUpdatedUi(blog),
-        })
+    deleteEntry = () => {
+        if(this.state.selected !== -1) {
+            let blog = this.state.blog;
+            blog.splice(this.state.selected,1);
+            this.setState({
+                anchor: null,
+                selected: -1,
+                popoverDialog: false,
+                blog: blog,
+                ui: this.getUpdatedUi(blog),
+            });
+        }
     }
 
-    clickEvent = (key) => {
-        this.deleteEntry(key);
+    clickEvent = (e, key) => {
+        this.setState({
+            selected: key,
+            anchor: e.currentTarget,
+            popoverDialog: true
+        });
+    }
+
+    handleClosePopOverDialog = () => {
+        this.setState({
+            selected: -1,
+            anchor: null,
+            popoverDialog: false,
+        });
     }
 
     getUpdatedUi = (blog) => {
@@ -169,7 +200,8 @@ class Publish extends React.Component {
                 value[1].child, 
                 key, 
                 this.props.classes, 
-                this.clickEvent));
+                this.clickEvent,
+                true));
         });
         return ui;
     }
@@ -212,6 +244,28 @@ class Publish extends React.Component {
         const { classes } = this.props;
         return(
             <Container maxWidth='md'>
+                <Popover
+                    open={this.state.popoverDialog}
+                    anchorEl={this.state.anchor}
+                    onClose={this.handleClosePopOverDialog}
+                    anchorOrigin={{
+                        vertical: 'center',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'center',
+                        horizontal: 'center',
+                    }}
+                >
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={this.deleteEntry}
+                        startIcon={<DeleteIcon />}
+                    >
+                        Delete
+                    </Button>
+                </Popover>
                 <input 
                 style={{display: 'none'}} 
                 type='file' 
