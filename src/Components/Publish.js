@@ -19,6 +19,13 @@ const styles = theme => ({
         marginLeft: theme.spacing(2),
         flex: 1,
     },
+    text: {
+        width: '100%',
+        border: 0,
+        fontSize: '18px',
+        outline: 'none',
+        padding: '8px 0px 7px',
+    },
     horizonDot: {
         fontSize: '30px',
         color: Colors.green,
@@ -69,18 +76,23 @@ class Publish extends React.Component {
 
     componentDidMount() {
         this.fileSelector = React.createRef();
-        // document.addEventListener("keydown", this._handleKeyDown);
+        document.addEventListener("keydown", this._handleKeyDown);
     }
 
     componentWillUnmount() {
         document.removeEventListener("keydown", this._handleKeyDown);
     }
 
-    // _handleKeyDown = (e) => {
-    //     if(this.state.selected !== -1 && (e.key === 'Backspace' || e.key === 'Delete')) {
-    //         this.deleteEntry(this.state.selected);
-    //     }
-    // }
+    _handleKeyDown = (event) => {
+        if((event.ctrlKey || event.metaKey) && event.which === 83) {
+            event.preventDefault();
+            this.saveBlog();
+        }
+    }
+
+    saveBlog = () => {
+        console.log(this.state.blog);
+    } 
 
     handleFileChange = (e) => {
         if(e.target.files.length > 0) {
@@ -330,23 +342,34 @@ class Publish extends React.Component {
                     </DialogContent>
                 </Dialog>
                 <p style={{color: Colors.grey}}>Press Ctrl+s To save in draft</p>
-                <TextField
-                placeholder="Title"
-                size='medium'
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                    shrink: true,
-                }}
-                />
+                <Grid container spacing={0}>
+                    <Grid item xs={2} sm={1}>
+                    </Grid>
+                    <Grid item xs={10} sm={11}>
+                    <input
+                    placeholder="Title"
+                    style={{
+                        fontSize: '34px', 
+                        fontWeight: 700,
+                        width: '100%',
+                        border: 0,
+                        outline: 'none'
+                    }}
+                    />
+                    </Grid>
+                </Grid>
+                <br/>
                 {this.state.ui}
                 <Grid container spacing={0}>
                     <Grid item xs={2} sm={1}>
                         <SpeedDial
                         className={classes.speedDial}
-                        size="small"
                         ariaLabel="Add Image, Video etc.."
                         icon={<SpeedDialIcon />}
+                        FabProps={{ 
+                            size: "small", 
+                            style: { backgroundColor: Colors.blue 
+                        }}}
                         onClose={this.handleClose}
                         onOpen={this.handleOpen}
                         open={this.state.open}
@@ -375,16 +398,12 @@ class Publish extends React.Component {
                         </SpeedDial>
                     </Grid>
                     <Grid item xs={10} sm={11}>
-                        <TextField
+                        <TextareaAutosize
+                        className={classes.text}
                         placeholder="Express Your Thoughts.."
-                        fullWidth
                         onFocus={this.closeToggle}
                         size='medium'
                         margin="normal"
-                        style={{marginLeft:'5px'}}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
                         />
                     </Grid>
                 </Grid>
