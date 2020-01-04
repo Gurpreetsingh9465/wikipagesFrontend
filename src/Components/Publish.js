@@ -98,8 +98,10 @@ class Publish extends React.Component {
             blog: [],
             anchor: null,
             selected: -1,
+            inputNo: 0,
             popoverDialog: false,
             ui: [],
+            uiDown: [],
             typography: [],
             text: '',
             textType: null,
@@ -127,6 +129,19 @@ class Publish extends React.Component {
         if((event.ctrlKey || event.metaKey) && event.which === 83) {
             event.preventDefault();
             this.saveBlog();
+        } else if( (event.key === 'Backspace' || event.key === 'Delete') 
+                    && this.state.selected !== -1) {
+            this.deleteEntry();
+        } else if(event.key === 'Enter' && this.state.selected !== -1) {
+            let {ui, inputNo, uiDown} = this.getUpdatedUi(this.state.blog, this.state.selected+1);
+            this.setState({
+                ui: ui,
+                inputNo: inputNo,
+                uiDown: uiDown,
+                selected: -1,
+                anchor: null,
+                popoverDialog: false,
+            })
         }
     }
 
@@ -160,10 +175,13 @@ class Publish extends React.Component {
 
     addCode = () => {
         let blog = this.state.blog;
-        blog.push(elements.getCode(this.state.code));
+        blog.splice(this.state.inputNo, 0, elements.getCode(this.state.code));
+        let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
         this.setState({
             blog: blog,
-            ui: this.getUpdatedUi(blog),
+            ui: ui,
+            uiDown: uiDown,
+            inputNo: inputNo,
             code: '',
             codeDialog: false
         });
@@ -172,10 +190,14 @@ class Publish extends React.Component {
 
     addImage = (src) => {
         let blog = this.state.blog;
-        blog.push(elements.getImage(src));
+
+        blog.splice(this.state.inputNo, 0, elements.getImage(src));
+        let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
         this.setState({
             blog: blog,
-            ui: this.getUpdatedUi(blog),
+            ui: ui,
+            uiDown: uiDown,
+            inputNo: inputNo,
         });
     }
 
@@ -217,27 +239,35 @@ class Publish extends React.Component {
     deleteEntry = () => {
         if(this.state.selected !== -1) {
             let blog = this.state.blog;
-            blog.splice(this.state.selected,1);
+            blog.splice(this.state.selected, 1);
+            let {ui, inputNo, uiDown} = this.getUpdatedUi(blog, this.state.inputNo-1);
             this.setState({
                 anchor: null,
                 selected: -1,
                 popoverDialog: false,
                 blog: blog,
-                ui: this.getUpdatedUi(blog),
+                ui: ui,
+                uiDown: uiDown,
+                inputNo: inputNo,
             });
         }
     }
 
     popEntry = () => {
-        let blog = this.state.blog;
-        blog.pop();
-        this.setState({
-            anchor: null,
-            selected: -1,
-            popoverDialog: false,
-            blog: blog,
-            ui: this.getUpdatedUi(blog),
-        });
+        if(this.state.inputNo !== 0) {
+            let blog = this.state.blog;
+            blog.splice(this.state.inputNo-1,1);
+            let {ui, inputNo, uiDown} = this.getUpdatedUi(blog, this.state.inputNo-1);
+            this.setState({
+                blog: blog,
+                ui: ui,
+                uiDown: uiDown,
+                inputNo: inputNo,
+                anchor: null,
+                selected: -1,
+                popoverDialog: false,
+            });
+        }
     }
 
     clickEvent = (e, key) => {
@@ -256,18 +286,138 @@ class Publish extends React.Component {
         });
     }
 
-    getUpdatedUi = (blog) => {
-        let ui =[];
+    getInpuField = (classes) => {
+        return(<div>
+            <Grid container spacing ={0}>
+                <Grid item xs={2} sm={1}>
+                </Grid>
+                <Grid item xs={10} sm={11}>
+                    <Paper elevation={0} className={classes.paper}>
+                        <StyledToggleButtonGroup
+                        size="small"
+                        value={this.state.textType}
+                        exclusive
+                        onChange={this.handleTextType}
+                        aria-label="text type"
+                        >
+                            <ToggleButton value="quote" title="Centered">
+                                <FormatQuoteIcon />
+                            </ToggleButton>
+                            <ToggleButton value="heading" title="Heading">
+                                <TextFieldsIcon />
+                            </ToggleButton>
+                            <ToggleButton value="subHeading" title="Sub Heading">
+                                <TextFieldsIcon style={{fontSize: '15px'}} />
+                            </ToggleButton>
+                            </StyledToggleButtonGroup>
+                            <Divider orientation="vertical" className={classes.divider} />
+                            <StyledToggleButtonGroup
+                            size="small"
+                            value={this.state.textStyle}
+                            onChange={this.handleTextStyle}
+                            aria-label="text style"
+                            >
+                            <ToggleButton 
+                            disabled={this.state.textType?true:false} 
+                            value="bold" 
+                            title="bold">
+                                <FormatBoldIcon />
+                            </ToggleButton>
+                            <ToggleButton 
+                            disabled={this.state.textType?true:false}
+                            value="italic" 
+                            title="italic">
+                                <FormatItalicIcon />
+                            </ToggleButton>
+                            <ToggleButton 
+                            disabled={this.state.textType?true:false}
+                            value="link" 
+                            title="link">
+                                <LinkIcon />
+                            </ToggleButton>
+                        </StyledToggleButtonGroup>
+                    </Paper>
+                </Grid>
+            </Grid>
+            <br/>
+            <Grid container spacing={0}>
+                <Grid item xs={2} sm={1}>
+                    <SpeedDial
+                    className={classes.speedDial}
+                    ariaLabel="Add Image, Video etc.."
+                    icon={<SpeedDialIcon />}
+                    FabProps={{ 
+                        size: "small", 
+                        style: { backgroundColor: Colors.blue 
+                    }}}
+                    onClose={this.handleClose}
+                    onOpen={this.handleOpen}
+                    open={this.state.open}
+                    direction='down'
+                    >
+                        <SpeedDialAction
+                            icon={<PlayIcon/>}
+                            tooltipTitle="Add YouTube, Vimeo Video"
+                            onClick={this.handleOpenVideoDialog}
+                        />
+                        <SpeedDialAction
+                            icon={<WallpaperIcon/>}
+                            tooltipTitle="Add Image"
+                            onClick={this.handleFileSelect}
+                        />
+                        <SpeedDialAction
+                            icon={<HorizIcon/>}
+                            tooltipTitle="Add Break Point"
+                            onClick={this.addBreakPoint}
+                        />
+                        <SpeedDialAction
+                            icon={<CodeIcon/>}
+                            tooltipTitle="Add Code"
+                            onClick={this.handleOpenCodeDialog}
+                        />
+                    </SpeedDial>
+                </Grid>
+                <Grid item xs={10} sm={11}>
+                    <TextareaAutosize
+                    id='text'
+                    ref={this.text}
+                    value={this.state.text}
+                    onChange={this.onChange}
+                    onKeyDown={this.addText}
+                    className={classes.text}
+                    placeholder="Express Your Thoughts.."
+                    onFocus={this.closeToggle}
+                    size='medium'
+                    margin="normal"
+                    />
+                </Grid>
+            </Grid>
+        </div>)
+    }
+
+    getUpdatedUi = (blog, inputNo = (this.state.inputNo+1)) => {
+        let ui = [];
+        let uiDown = [];
         blog.forEach((value, key) => {
-            ui.push(createTag(value[0], 
-                value[1].attributes, 
-                value[1].child, 
-                key, 
-                this.props.classes, 
-                this.clickEvent,
-                true));
+            if(key < inputNo) {
+                ui.push(createTag(value[0], 
+                    value[1].attributes, 
+                    value[1].child, 
+                    key, 
+                    this.props.classes, 
+                    this.clickEvent,
+                    true));
+            } else {
+                uiDown.push(createTag(value[0], 
+                    value[1].attributes, 
+                    value[1].child, 
+                    key, 
+                    this.props.classes, 
+                    this.clickEvent,
+                    true));
+            }
         });
-        return ui;
+        return {ui, inputNo, uiDown};
     }
 
     onChange = (e) => {
@@ -278,10 +428,13 @@ class Publish extends React.Component {
 
     addBreakPoint = () => {
         let blog = this.state.blog;
-        blog.push(elements.getBreakPoint());
+        blog.splice(this.state.inputNo, 0, elements.getBreakPoint());
+        let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
         this.setState({
             blog: blog,
-            ui: this.getUpdatedUi(blog)
+            ui: ui,
+            uiDown: uiDown,
+            inputNo: inputNo
         });
     }
 
@@ -292,25 +445,28 @@ class Publish extends React.Component {
             if(this.state.textType && this.state.text !== '') {
                 switch(this.state.textType) {
                     case('heading'):
-                        blog.push(elements.getHeading(this.state.text));
+                        blog.splice(this.state.inputNo, 0, elements.getHeading(this.state.text));
                         break
                     case('subHeading'):
-                        blog.push(elements.getSubHeading(this.state.text));
+                        blog.splice(this.state.inputNo, 0, elements.getSubHeading(this.state.text));
                         break
                     case('quote'):
-                        blog.push(elements.getQuote(this.state.text));
+                        blog.splice(this.state.inputNo, 0, elements.getQuote(this.state.text));
                         break
                     default:
                         break
                 }
             } else if(this.state.typography.length === 0) {
-                blog.push(elements.getEnter());
+                blog.splice(this.state.inputNo, 0, elements.getEnter());
             } else {
-                blog.push(elements.getTypography(this.state.typography));
+                blog.splice(this.state.inputNo, 0, elements.getTypography(this.state.typography));
             }
+            let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
             this.setState({
                 blog: blog,
-                ui: this.getUpdatedUi(blog),
+                ui: ui,
+                uiDown: uiDown,
+                inputNo: inputNo,
                 typography: [],
                 text: ''
             });
@@ -322,10 +478,13 @@ class Publish extends React.Component {
     addVideo = () => {
         if(this.state.videoLink.includes('vimeo') || this.state.videoLink.includes('youtube')) {
             let blog = this.state.blog;
-            blog.push(elements.getVideo(this.state.videoLink, this.state.caption));
+            blog.splice(this.state.inputNo, 0, elements.getVideo(this.state.videoLink, this.state.caption));
+            let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
             this.setState({
                 blog: blog,
-                ui: this.getUpdatedUi(blog),
+                ui: ui,
+                uiDown: uiDown,
+                inputNo: inputNo,
                 videoLink: '',
                 caption: '',
                 videoDialog: false,
@@ -355,6 +514,7 @@ class Publish extends React.Component {
         let startPosition = this.text.current.selectionStart;
         let endPosition = this.text.current.selectionEnd;
         let selectedText = this.text.current.value.substring(startPosition, endPosition);
+        console.log(selectedText);
     }
 
     testing = () => {
@@ -370,53 +530,6 @@ class Publish extends React.Component {
         const { classes } = this.props;
         return(
             <Container maxWidth='md'>
-                <div>
-                <Paper elevation={0} className={classes.paper}>
-                    <StyledToggleButtonGroup
-                    size="small"
-                    value={this.state.textType}
-                    exclusive
-                    onChange={this.handleTextType}
-                    aria-label="text type"
-                    >
-                        <ToggleButton value="quote" title="Centered">
-                            <FormatQuoteIcon />
-                        </ToggleButton>
-                        <ToggleButton value="heading" title="Heading">
-                            <TextFieldsIcon />
-                        </ToggleButton>
-                        <ToggleButton value="subHeading" title="Sub Heading">
-                            <TextFieldsIcon style={{fontSize: '15px'}} />
-                        </ToggleButton>
-                        </StyledToggleButtonGroup>
-                        <Divider orientation="vertical" className={classes.divider} />
-                        <StyledToggleButtonGroup
-                        size="small"
-                        value={this.state.textStyle}
-                        onChange={this.handleTextStyle}
-                        aria-label="text style"
-                        >
-                        <ToggleButton 
-                        disabled={this.state.textType?true:false} 
-                        value="bold" 
-                        title="bold">
-                            <FormatBoldIcon />
-                        </ToggleButton>
-                        <ToggleButton 
-                        disabled={this.state.textType?true:false}
-                        value="italic" 
-                        title="italic">
-                            <FormatItalicIcon />
-                        </ToggleButton>
-                        <ToggleButton 
-                        disabled={this.state.textType?true:false}
-                        value="link" 
-                        title="link">
-                            <LinkIcon />
-                        </ToggleButton>
-                    </StyledToggleButtonGroup>
-                </Paper>
-                </div>
                 <Popover
                     open={this.state.popoverDialog}
                     anchorEl={this.state.anchor}
@@ -518,58 +631,21 @@ class Publish extends React.Component {
                     />
                     </Grid>
                 </Grid>
-                <br/>
-                {this.state.ui}
-                <Grid container spacing={0}>
+                <Grid container spacing ={0}>
                     <Grid item xs={2} sm={1}>
-                        <SpeedDial
-                        className={classes.speedDial}
-                        ariaLabel="Add Image, Video etc.."
-                        icon={<SpeedDialIcon />}
-                        FabProps={{ 
-                            size: "small", 
-                            style: { backgroundColor: Colors.blue 
-                        }}}
-                        onClose={this.handleClose}
-                        onOpen={this.handleOpen}
-                        open={this.state.open}
-                        direction='down'
-                        >
-                        <SpeedDialAction
-                            icon={<PlayIcon/>}
-                            tooltipTitle="Add YouTube, Vimeo Video"
-                            onClick={this.handleOpenVideoDialog}
-                        />
-                        <SpeedDialAction
-                            icon={<WallpaperIcon/>}
-                            tooltipTitle="Add Image"
-                            onClick={this.handleFileSelect}
-                        />
-                        <SpeedDialAction
-                            icon={<HorizIcon/>}
-                            tooltipTitle="Add Break Point"
-                            onClick={this.addBreakPoint}
-                        />
-                        <SpeedDialAction
-                            icon={<CodeIcon/>}
-                            tooltipTitle="Add Code"
-                            onClick={this.handleOpenCodeDialog}
-                        />
-                        </SpeedDial>
                     </Grid>
                     <Grid item xs={10} sm={11}>
-                        <TextareaAutosize
-                        id='text'
-                        ref={this.text}
-                        value={this.state.text}
-                        onChange={this.onChange}
-                        onKeyDown={this.addText}
-                        className={classes.text}
-                        placeholder="Express Your Thoughts.."
-                        onFocus={this.closeToggle}
-                        size='medium'
-                        margin="normal"
-                        />
+                        {this.state.ui}
+                    </Grid>
+                </Grid>
+                <br/>
+                {this.getInpuField(classes)}
+                <br/>
+                <Grid container spacing ={0}>
+                    <Grid item xs={2} sm={1}>
+                    </Grid>
+                    <Grid item xs={10} sm={11}>
+                        {this.state.uiDown}
                     </Grid>
                 </Grid>
             </Container>
