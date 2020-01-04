@@ -1,7 +1,17 @@
 import React from 'react';
-import { Container, TextareaAutosize, Popover, Typography, IconButton, TextField, Slide, Grid, withStyles, DialogTitle, Button, Dialog, DialogActions, DialogContent, AppBar, Toolbar } from '@material-ui/core';
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
-import { Code as CodeIcon, Close as CloseIcon, PlayCircleFilledOutlined as PlayIcon, WallpaperOutlined as WallpaperIcon, MoreHoriz as HorizIcon, Delete as DeleteIcon } from '@material-ui/icons';
+import { Container, Paper, Divider, TextareaAutosize, Popover, Typography, IconButton, TextField, Slide, Grid, withStyles, DialogTitle, Button, Dialog, DialogActions, DialogContent, AppBar, Toolbar } from '@material-ui/core';
+import { SpeedDial, ToggleButton, ToggleButtonGroup, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
+import { Code as CodeIcon, 
+        Close as CloseIcon, 
+        PlayCircleFilledOutlined as PlayIcon, 
+        WallpaperOutlined as WallpaperIcon, 
+        FormatQuote as FormatQuoteIcon,
+        MoreHoriz as HorizIcon, 
+        Delete as DeleteIcon,
+        Link as LinkIcon,
+        FormatBold as FormatBoldIcon,
+        FormatItalic as FormatItalicIcon,
+        TextFields as TextFieldsIcon } from '@material-ui/icons';
 import { Colors } from '../utils/Colors';
 import PropTypes from 'prop-types';
 import * as elements from './UIelements/GetBlogElements';
@@ -10,6 +20,20 @@ import { createTag } from './UIelements/createTag';
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
+
+const StyledToggleButtonGroup = withStyles(theme => ({
+    grouped: {
+        margin: theme.spacing(0.5),
+        border: 'none',
+        padding: theme.spacing(0, 1),
+        '&:not(:first-child)': {
+            borderRadius: theme.shape.borderRadius,
+        },
+        '&:first-child': {
+            borderRadius: theme.shape.borderRadius,
+        },
+    },
+}))(ToggleButtonGroup);
 
 const styles = theme => ({
     appBar: {
@@ -24,7 +48,7 @@ const styles = theme => ({
         border: 0,
         fontSize: '18px',
         outline: 'none',
-        padding: '8px 0px 7px',
+        padding: '9px 0px 6px',
     },
     horizonDot: {
         fontSize: '30px',
@@ -52,6 +76,17 @@ const styles = theme => ({
         border: 0,
         outline: 'none'
     },
+    paper: {
+        width: theme.spacing(35),
+        display: 'flex',
+        border: `1px solid ${theme.palette.divider}`,
+        flexWrap: 'wrap',
+    },
+    divider: {
+        alignSelf: 'stretch',
+        height: 'auto',
+        margin: theme.spacing(1, 0.5),
+    },
 });
 
 class Publish extends React.Component {
@@ -65,6 +100,10 @@ class Publish extends React.Component {
             selected: -1,
             popoverDialog: false,
             ui: [],
+            typography: [],
+            text: '',
+            textType: null,
+            textStyle: [],
             videoDialog: false,
             codeDialog: false,
             videoLink: '',
@@ -72,10 +111,11 @@ class Publish extends React.Component {
             code: '',
             videoLinkError: false
         }
+        this.fileSelector = React.createRef();
+        this.text = React.createRef();
     }
 
     componentDidMount() {
-        this.fileSelector = React.createRef();
         document.addEventListener("keydown", this._handleKeyDown);
     }
 
@@ -188,6 +228,18 @@ class Publish extends React.Component {
         }
     }
 
+    popEntry = () => {
+        let blog = this.state.blog;
+        blog.pop();
+        this.setState({
+            anchor: null,
+            selected: -1,
+            popoverDialog: false,
+            blog: blog,
+            ui: this.getUpdatedUi(blog),
+        });
+    }
+
     clickEvent = (e, key) => {
         this.setState({
             selected: key,
@@ -233,6 +285,40 @@ class Publish extends React.Component {
         });
     }
 
+    addText = (e) => {
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            let blog = this.state.blog;
+            if(this.state.textType && this.state.text !== '') {
+                switch(this.state.textType) {
+                    case('heading'):
+                        blog.push(elements.getHeading(this.state.text));
+                        break
+                    case('subHeading'):
+                        blog.push(elements.getSubHeading(this.state.text));
+                        break
+                    case('quote'):
+                        blog.push(elements.getQuote(this.state.text));
+                        break
+                    default:
+                        break
+                }
+            } else if(this.state.typography.length === 0) {
+                blog.push(elements.getEnter());
+            } else {
+                blog.push(elements.getTypography(this.state.typography));
+            }
+            this.setState({
+                blog: blog,
+                ui: this.getUpdatedUi(blog),
+                typography: [],
+                text: ''
+            });
+        } else if(e.key === 'Backspace' && this.state.text === '') {
+            this.popEntry();
+        }
+    }
+
     addVideo = () => {
         if(this.state.videoLink.includes('vimeo') || this.state.videoLink.includes('youtube')) {
             let blog = this.state.blog;
@@ -252,10 +338,85 @@ class Publish extends React.Component {
         }
     }
 
+    handleTextType = (event, type) => {
+        this.setState({
+            textType: type,
+            textStyle: []
+        });
+    }
+
+    handleTextStyle = (event, style) => {
+        this.setState({
+            textStyle: style
+        });
+    }
+
+    makeBold = () => {
+        let startPosition = this.text.current.selectionStart;
+        let endPosition = this.text.current.selectionEnd;
+        let selectedText = this.text.current.value.substring(startPosition, endPosition);
+    }
+
+    testing = () => {
+        let startPosition = this.text.current.selectionStart;
+        let endPosition = this.text.current.selectionEnd;
+        let selectedText = this.text.current.value.substring(startPosition, endPosition);
+        console.log(selectedText);
+        console.log(this.state.textStyle);
+        console.log(this.state.textType);
+    }
+
     render() {
         const { classes } = this.props;
         return(
             <Container maxWidth='md'>
+                <div>
+                <Paper elevation={0} className={classes.paper}>
+                    <StyledToggleButtonGroup
+                    size="small"
+                    value={this.state.textType}
+                    exclusive
+                    onChange={this.handleTextType}
+                    aria-label="text type"
+                    >
+                        <ToggleButton value="quote" title="Centered">
+                            <FormatQuoteIcon />
+                        </ToggleButton>
+                        <ToggleButton value="heading" title="Heading">
+                            <TextFieldsIcon />
+                        </ToggleButton>
+                        <ToggleButton value="subHeading" title="Sub Heading">
+                            <TextFieldsIcon style={{fontSize: '15px'}} />
+                        </ToggleButton>
+                        </StyledToggleButtonGroup>
+                        <Divider orientation="vertical" className={classes.divider} />
+                        <StyledToggleButtonGroup
+                        size="small"
+                        value={this.state.textStyle}
+                        onChange={this.handleTextStyle}
+                        aria-label="text style"
+                        >
+                        <ToggleButton 
+                        disabled={this.state.textType?true:false} 
+                        value="bold" 
+                        title="bold">
+                            <FormatBoldIcon />
+                        </ToggleButton>
+                        <ToggleButton 
+                        disabled={this.state.textType?true:false}
+                        value="italic" 
+                        title="italic">
+                            <FormatItalicIcon />
+                        </ToggleButton>
+                        <ToggleButton 
+                        disabled={this.state.textType?true:false}
+                        value="link" 
+                        title="link">
+                            <LinkIcon />
+                        </ToggleButton>
+                    </StyledToggleButtonGroup>
+                </Paper>
+                </div>
                 <Popover
                     open={this.state.popoverDialog}
                     anchorEl={this.state.anchor}
@@ -269,14 +430,13 @@ class Publish extends React.Component {
                         horizontal: 'center',
                     }}
                 >
-                    <Button
-                        variant="contained"
+                    <IconButton
                         color="secondary"
+                        size='small'
                         onClick={this.deleteEntry}
-                        startIcon={<DeleteIcon />}
                     >
-                        Delete
-                    </Button>
+                        <DeleteIcon />
+                    </IconButton>
                 </Popover>
                 <input 
                 style={{display: 'none'}} 
@@ -399,6 +559,11 @@ class Publish extends React.Component {
                     </Grid>
                     <Grid item xs={10} sm={11}>
                         <TextareaAutosize
+                        id='text'
+                        ref={this.text}
+                        value={this.state.text}
+                        onChange={this.onChange}
+                        onKeyDown={this.addText}
                         className={classes.text}
                         placeholder="Express Your Thoughts.."
                         onFocus={this.closeToggle}
