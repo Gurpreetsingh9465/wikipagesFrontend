@@ -50,6 +50,9 @@ const styles = theme => ({
         outline: 'none',
         padding: '9px 0px 6px',
     },
+    speedDial: {
+        height: theme.spacing(2),
+    },
     horizonDot: {
         fontSize: '30px',
         color: Colors.green,
@@ -157,11 +160,13 @@ class Publish extends React.Component {
 
     handleOpenCodeDialog = () => {
         this.setState({
-            codeDialog: true
+            codeDialog: true,
+            open: false,
         });
     }
 
     handleFileSelect = (e) => {
+        this.handleToggle();
         e.preventDefault();
         this.fileSelector.current.click();
     }
@@ -203,7 +208,8 @@ class Publish extends React.Component {
 
     handleOpenVideoDialog = () => {
         this.setState({
-            videoDialog: true
+            videoDialog: true,
+            open: false
         });
     }
 
@@ -224,15 +230,9 @@ class Publish extends React.Component {
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
     }
 
-    handleOpen = () => {
+    handleToggle = () => {
         this.setState({
-            open: true
-        }); 
-    }
-
-    handleClose = () => {
-        this.setState({
-            open: false
+            open: !this.state.open
         });
     }
     
@@ -240,7 +240,11 @@ class Publish extends React.Component {
         if(this.state.selected !== -1) {
             let blog = this.state.blog;
             blog.splice(this.state.selected, 1);
-            let {ui, inputNo, uiDown} = this.getUpdatedUi(blog, this.state.inputNo-1);
+            let currentInput = this.state.inputNo;
+            if(this.state.selected < this.state.inputNo) {
+                currentInput-=1;
+            }
+            let {ui, inputNo, uiDown} = this.getUpdatedUi(blog, currentInput);
             this.setState({
                 anchor: null,
                 selected: -1,
@@ -286,115 +290,6 @@ class Publish extends React.Component {
         });
     }
 
-    getInpuField = (classes) => {
-        return(<div>
-            <Grid container spacing ={0}>
-                <Grid item xs={2} sm={1}>
-                </Grid>
-                <Grid item xs={10} sm={11}>
-                    <Paper elevation={0} className={classes.paper}>
-                        <StyledToggleButtonGroup
-                        size="small"
-                        value={this.state.textType}
-                        exclusive
-                        onChange={this.handleTextType}
-                        aria-label="text type"
-                        >
-                            <ToggleButton value="quote" title="Centered">
-                                <FormatQuoteIcon />
-                            </ToggleButton>
-                            <ToggleButton value="heading" title="Heading">
-                                <TextFieldsIcon />
-                            </ToggleButton>
-                            <ToggleButton value="subHeading" title="Sub Heading">
-                                <TextFieldsIcon style={{fontSize: '15px'}} />
-                            </ToggleButton>
-                            </StyledToggleButtonGroup>
-                            <Divider orientation="vertical" className={classes.divider} />
-                            <StyledToggleButtonGroup
-                            size="small"
-                            value={this.state.textStyle}
-                            onChange={this.handleTextStyle}
-                            aria-label="text style"
-                            >
-                            <ToggleButton 
-                            disabled={this.state.textType?true:false} 
-                            value="bold" 
-                            title="bold">
-                                <FormatBoldIcon />
-                            </ToggleButton>
-                            <ToggleButton 
-                            disabled={this.state.textType?true:false}
-                            value="italic" 
-                            title="italic">
-                                <FormatItalicIcon />
-                            </ToggleButton>
-                            <ToggleButton 
-                            disabled={this.state.textType?true:false}
-                            value="link" 
-                            title="link">
-                                <LinkIcon />
-                            </ToggleButton>
-                        </StyledToggleButtonGroup>
-                    </Paper>
-                </Grid>
-            </Grid>
-            <br/>
-            <Grid container spacing={0}>
-                <Grid item xs={2} sm={1}>
-                    <SpeedDial
-                    className={classes.speedDial}
-                    ariaLabel="Add Image, Video etc.."
-                    icon={<SpeedDialIcon />}
-                    FabProps={{ 
-                        size: "small", 
-                        style: { backgroundColor: Colors.blue 
-                    }}}
-                    onClose={this.handleClose}
-                    onOpen={this.handleOpen}
-                    open={this.state.open}
-                    direction='down'
-                    >
-                        <SpeedDialAction
-                            icon={<PlayIcon/>}
-                            tooltipTitle="Add YouTube, Vimeo Video"
-                            onClick={this.handleOpenVideoDialog}
-                        />
-                        <SpeedDialAction
-                            icon={<WallpaperIcon/>}
-                            tooltipTitle="Add Image"
-                            onClick={this.handleFileSelect}
-                        />
-                        <SpeedDialAction
-                            icon={<HorizIcon/>}
-                            tooltipTitle="Add Break Point"
-                            onClick={this.addBreakPoint}
-                        />
-                        <SpeedDialAction
-                            icon={<CodeIcon/>}
-                            tooltipTitle="Add Code"
-                            onClick={this.handleOpenCodeDialog}
-                        />
-                    </SpeedDial>
-                </Grid>
-                <Grid item xs={10} sm={11}>
-                    <TextareaAutosize
-                    id='text'
-                    ref={this.text}
-                    value={this.state.text}
-                    onChange={this.onChange}
-                    onKeyDown={this.addText}
-                    className={classes.text}
-                    placeholder="Express Your Thoughts.."
-                    onFocus={this.closeToggle}
-                    size='medium'
-                    margin="normal"
-                    />
-                </Grid>
-            </Grid>
-        </div>)
-    }
-
     getUpdatedUi = (blog, inputNo = (this.state.inputNo+1)) => {
         let ui = [];
         let uiDown = [];
@@ -434,7 +329,8 @@ class Publish extends React.Component {
             blog: blog,
             ui: ui,
             uiDown: uiDown,
-            inputNo: inputNo
+            inputNo: inputNo,
+            open: false
         });
     }
 
@@ -639,8 +535,112 @@ class Publish extends React.Component {
                     </Grid>
                 </Grid>
                 <br/>
-                {this.getInpuField(classes)}
+                <Grid container spacing ={0}>
+                    <Grid item xs={2} sm={1}>
+                    </Grid>
+                    <Grid item xs={10} sm={11}>
+                        <Paper elevation={0} className={classes.paper}>
+                            <StyledToggleButtonGroup
+                            size="small"
+                            value={this.state.textType}
+                            exclusive
+                            onChange={this.handleTextType}
+                            aria-label="text type"
+                            >
+                                <ToggleButton value="quote" title="Centered">
+                                    <FormatQuoteIcon />
+                                </ToggleButton>
+                                <ToggleButton value="heading" title="Heading">
+                                    <TextFieldsIcon />
+                                </ToggleButton>
+                                <ToggleButton value="subHeading" title="Sub Heading">
+                                    <TextFieldsIcon style={{fontSize: '15px'}} />
+                                </ToggleButton>
+                                </StyledToggleButtonGroup>
+                                <Divider orientation="vertical" className={classes.divider} />
+                                <StyledToggleButtonGroup
+                                size="small"
+                                value={this.state.textStyle}
+                                onChange={this.handleTextStyle}
+                                aria-label="text style"
+                                >
+                                <ToggleButton 
+                                disabled={this.state.textType?true:false} 
+                                value="bold" 
+                                title="bold">
+                                    <FormatBoldIcon />
+                                </ToggleButton>
+                                <ToggleButton 
+                                disabled={this.state.textType?true:false}
+                                value="italic" 
+                                title="italic">
+                                    <FormatItalicIcon />
+                                </ToggleButton>
+                                <ToggleButton 
+                                disabled={this.state.textType?true:false}
+                                value="link" 
+                                title="link">
+                                    <LinkIcon />
+                                </ToggleButton>
+                            </StyledToggleButtonGroup>
+                        </Paper>
+                    </Grid>
+                </Grid>
                 <br/>
+                <Grid container spacing={0}>
+                    <Grid item xs={2} sm={1}>
+                        <SpeedDial
+                        className={classes.speedDial}
+                        ariaLabel="Add Image, Video etc.."
+                        icon={<SpeedDialIcon />}
+                        FabProps={{ 
+                            size: "small", 
+                            style: { 
+                                backgroundColor: Colors.blue,
+                                width: '36px'
+                        }}}
+                        // onClose={this.handleClose}
+                        onClick={this.handleToggle}
+                        open={this.state.open}
+                        direction='down'
+                        >
+                            <SpeedDialAction
+                                icon={<PlayIcon/>}
+                                tooltipTitle="Add YouTube, Vimeo Video"
+                                onClick={this.handleOpenVideoDialog}
+                            />
+                            <SpeedDialAction
+                                icon={<WallpaperIcon/>}
+                                tooltipTitle="Add Image"
+                                onClick={this.handleFileSelect}
+                            />
+                            <SpeedDialAction
+                                icon={<HorizIcon/>}
+                                tooltipTitle="Add Break Point"
+                                onClick={this.addBreakPoint}
+                            />
+                            <SpeedDialAction
+                                icon={<CodeIcon/>}
+                                tooltipTitle="Add Code"
+                                onClick={this.handleOpenCodeDialog}
+                            />
+                        </SpeedDial>
+                    </Grid>
+                    <Grid item xs={10} sm={11}>
+                        <TextareaAutosize
+                        id='text'
+                        ref={this.text}
+                        value={this.state.text}
+                        onChange={this.onChange}
+                        onKeyDown={this.addText}
+                        className={classes.text}
+                        placeholder="Express Your Thoughts.."
+                        onFocus={()=>{this.setState({open: false})}}
+                        size='medium'
+                        margin="normal"
+                        />
+                    </Grid>
+                </Grid>
                 <Grid container spacing ={0}>
                     <Grid item xs={2} sm={1}>
                     </Grid>
