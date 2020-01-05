@@ -50,7 +50,7 @@ export const getTypography = (child) => {
     }])
 }
 
-export const getText = (type, value) => {
+export const getText = (value, type='body1') => {
     return ({
         type: type,
         value: value

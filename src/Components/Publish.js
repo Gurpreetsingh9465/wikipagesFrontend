@@ -90,6 +90,21 @@ const styles = theme => ({
         height: 'auto',
         margin: theme.spacing(1, 0.5),
     },
+    italic: {
+        fontStyle: 'italic'
+    },
+    bold: {
+        fontWeight: '700'
+    },
+    link: {
+        color: Colors.black,
+        fontStyle: 'italic',
+        borderRadius: '5px',
+        backgroundColor: Colors.lightGreen,
+        "&:hover": {
+            backgroundColor: Colors.smoothGreen,
+        }
+    },
 });
 
 class Publish extends React.Component {
@@ -352,10 +367,14 @@ class Publish extends React.Component {
                     default:
                         break
                 }
-            } else if(this.state.typography.length === 0) {
+            } else if(this.state.text === '') {
                 blog.splice(this.state.inputNo, 0, elements.getEnter());
             } else {
-                blog.splice(this.state.inputNo, 0, elements.getTypography(this.state.typography));
+                let type = 'body1 ';
+                this.state.textStyle.forEach((style)=>{
+                    type+=(style+' ');
+                })
+                blog.splice(this.state.inputNo, 0, elements.getTypography([elements.getText(this.state.text, type)]));
             }
             let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
             this.setState({
@@ -394,6 +413,7 @@ class Publish extends React.Component {
     }
 
     handleTextType = (event, type) => {
+        this.text.current.className = this.props.classes.text;
         this.setState({
             textType: type,
             textStyle: []
@@ -401,6 +421,11 @@ class Publish extends React.Component {
     }
 
     handleTextStyle = (event, style) => {
+        let appliedClasses = this.props.classes.text + ' ';
+        style.forEach((c)=>{
+            appliedClasses+=(this.props.classes[c]+' ');
+        });
+        this.text.current.className = appliedClasses;
         this.setState({
             textStyle: style
         });
@@ -414,12 +439,13 @@ class Publish extends React.Component {
     }
 
     testing = () => {
-        let startPosition = this.text.current.selectionStart;
-        let endPosition = this.text.current.selectionEnd;
-        let selectedText = this.text.current.value.substring(startPosition, endPosition);
-        console.log(selectedText);
-        console.log(this.state.textStyle);
-        console.log(this.state.textType);
+        // let startPosition = this.text.current.selectionStart;
+        // let endPosition = this.text.current.selectionEnd;
+        // let selectedText = this.text.current.value.substring(startPosition, endPosition);
+        // console.log(selectedText);
+        // console.log(this.state.textStyle);
+        // console.log(this.state.textType);
+        console.log(this.state.text);
     }
 
     render() {
@@ -648,6 +674,7 @@ class Publish extends React.Component {
                         {this.state.uiDown}
                     </Grid>
                 </Grid>
+                {/* <Button variant='contained' onClick={this.testing} >test</Button> */}
             </Container>
         );
     }
