@@ -10,7 +10,7 @@ const element = {
     likes : 5000,
     text : 'This is the best piece i had ever scene and this is the best programing language ever possible',
     user : '/default.png',
-    name : 'Gurpreet Singh',
+    name : 'gurpreet singh',
     id : 'amansingh9569',
     time : '2019-12-25T08:25:36',
     title: 'How-to make a react app',

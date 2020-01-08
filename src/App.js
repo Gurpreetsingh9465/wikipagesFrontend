@@ -11,6 +11,7 @@ import Publish from './Components/Publish';
 import Stats from './Components/Stats';
 import BlogView from './Components/BlogView';
 import UserView from './Components/UserView';
+import Comments from './Components/Comments';
 
 const THEME = createMuiTheme({
   typography: {
@@ -79,6 +80,12 @@ class App extends React.Component {
             render={(routeProps)=>{
               return(
                 <UserView isMobile={isMobile} {...routeProps}/>
+            )}}
+            />
+            <Route exact path={ClientUrls.comments}
+            render={(routeProps)=>{
+              return(
+                <Comments isMobile={isMobile} {...routeProps}/>
             )}}
             />
           </Switch>

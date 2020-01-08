@@ -54,7 +54,11 @@ class ImageViewer extends React.Component {
                 variant="rect" 
                 height={this.props.height?this.props.height:isMobile?240:350} />
                 <img 
-                style={{display: !this.state.isLoaded?'none':'', maxHeight:'800px'}}
+                style={{
+                    display: !this.state.isLoaded?'none':'', 
+                    maxHeight:'800px',
+                    objectFit:this.props.crop?'cover':''
+                }}
                 onLoad={this.handleLoad}
                 width={isMobile?'100%':this.state.imageWidth}
                 ref={this.image}
@@ -80,11 +84,13 @@ ImageViewer.propType = {
     src: PropTypes.string.isRequired,
     caption: PropTypes.string.isRequired,
     height: PropTypes.number,
-    title: PropTypes.string
+    title: PropTypes.string,
+    crop: PropTypes.bool
 }
 
 ImageViewer.defaultProps = {
-    caption: ''
+    caption: '',
+    crop: false
 }
 
 export default ImageViewer;

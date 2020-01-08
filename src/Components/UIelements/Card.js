@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, withStyles, Grid, Avatar, Typography } from '@material-ui/core';
+import { Box, withStyles, Grid, Avatar, Typography, IconButton } from '@material-ui/core';
+import { Favorite as FavoriteIcon } from '@material-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 import { ClientUrls, urlMapper } from '../../utils/Urls';
 import { Colors } from '../../utils/Colors';
@@ -18,7 +19,7 @@ const months = [
     'Jan', 'Feb', 'Mar', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'
 ]
 
-class Element extends React.Component {
+class Card extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -50,38 +51,34 @@ class Element extends React.Component {
                     <Grid 
                     component={RouterLink} 
                     to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
-                    item xs={2} md={1}>
+                    item xs={2}>
                         <Avatar alt={this.props.name} src={this.props.user} className={classes.image}/>
                     </Grid>
-                    <Grid item xs={6} md={9} >
-                        <Typography
-                        variant={isMobile?'body2':'body1'}>
-                        <span style={{textTransform: 'capitalize',}}>{this.props.name}</span><span> </span>
-                        {isMobile?null:<RouterLink
-                        to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
-                        style={{color: Colors.grey, textDecoration:'underline'}}>
-                        @{this.props.id}
-                        </RouterLink>}</Typography>
-                        <Typography
-                        variant={isMobile?'body2':'body1'}
-                        style={{color: Colors.grey}}>
-                            {this.dateTime}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={4} md={2}>
-                        <Typography
-                        variant={isMobile?'body2':'body1'}
-                        style={{
-                            fontWeight: 400,
-                            color: Colors.grey,
-                        }}>
-                        { nFormatter(this.props.views, 1) + ' views'}</Typography>
-                        <Typography
-                        variant={isMobile?'body2':'body1'}
-                        style={{
-                            fontWeight: 400,
-                            color: Colors.grey,
-                        }}>{ nFormatter(this.props.likes, 1) + ' loves it'}</Typography>
+                        <Grid item xs={6} >
+                            <Typography
+                            variant={isMobile?'body2':'body1'}>
+                            <span style={{textTransform: 'capitalize',}}>{this.props.name}</span>
+                            </Typography>
+                            <Typography
+                            variant={isMobile?'body2':'body1'}
+                            style={{color: Colors.grey}}>
+                                {this.dateTime}
+                            </Typography>
+                        </Grid>
+                        <Grid align='right' item xs={4}>
+                        <IconButton
+                        style={{ 
+                            backgroundColor: 'transparent',
+                            color: Colors.red,
+                        }} 
+                        disableFocusRipple disableRipple 
+                        title='Love' 
+                        >
+                            <Typography>
+                                {nFormatter(this.props.likes,1)}<span> </span>
+                            </Typography>
+                            <FavoriteIcon fontSize='small'/>
+                        </IconButton>
                     </Grid>
                 </Grid>
                 <br/>
@@ -97,7 +94,8 @@ class Element extends React.Component {
                     <ImageViewer
                     src={this.props.image}
                     title={this.props.title}
-                    height={150}
+                    crop={true}
+                    height={'250px'}
                     />
                     <Typography style={{
                         fontWeight:800,
@@ -106,11 +104,6 @@ class Element extends React.Component {
                     variant="h6">
                     {this.props.title}
                     </Typography>
-                    <Typography
-                    variant={isMobile?'body2':'body1'}
-                    style={{color: Colors.grey}}>
-                        {this.props.text}
-                    </Typography>
                 </Box>
                 <br/>
             </Box>
@@ -118,13 +111,10 @@ class Element extends React.Component {
     }
 }
 
-Element.propTypes = {
-    width: PropTypes.string,
+Card.propTypes = {
     image: PropTypes.string,
-    views: PropTypes.number,
     likes: PropTypes.number,
     title: PropTypes.string,
-    text: PropTypes.string,
     user: PropTypes.string,
     name: PropTypes.string,
     id: PropTypes.string,
@@ -132,18 +122,15 @@ Element.propTypes = {
     blogId: PropTypes.string,
 };
 
-Element.defaultProps = {
-    width: '100%',
-    image: undefined,
-    views: 0,
-    likes: 0,
-    text: '',
-    user: 'default.png',
-    title: 'title',
-    name: 'User Name',
+Card.defaultProps = {
+    image : undefined,
+    likes : 0,
+    user : '/default.png',
     id: 'username',
-    time: 0,
-    blogId: 'undef',
+    name : 'User Name',
+    time : 0,
+    title: 'title',
+    blogId: 'unDef',
 };
 
-export default withStyles(styles)(Element);
+export default withStyles(styles)(Card);
