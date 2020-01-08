@@ -2,7 +2,7 @@ import React from "react";
 import { Container, FormControl, TextField, Divider, Grid, Menu, MenuItem, Input, Link, Dialog, IconButton, DialogContent, DialogTitle, Typography, Avatar, useScrollTrigger, Slide, InputBase, Toolbar, AppBar, Button} from "@material-ui/core";
 import { Search as SearchIcon, KeyboardBackspace as KeyboardBackspaceIcon, Close as CloseIcon, MailOutline as MailOutlineIcon } from "@material-ui/icons";
 import { withStyles, fade } from "@material-ui/core/styles";
-import { ClientUrls } from '../utils/Urls';
+import { ClientUrls, urlMapper } from '../utils/Urls';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import PasswordInput from './UIelements/PasswordInput';
@@ -146,6 +146,15 @@ class Header extends React.Component {
       anchor: null,
       dialogElement: this.getLoginDialog(props.classes),
     };
+  }
+
+  searchQuery = (e) => {
+    if(e.key === 'Enter') {
+      e.preventDefault();
+      this.setState({searchDialogEnable: false});
+
+      // this.props.history.push(urlMapper({query: e.target.value}, ClientUrls.search));
+    }
   }
   
   handleClickShowPassword = () => {
@@ -344,6 +353,7 @@ class Header extends React.Component {
             root: classes.inputRoot,
             input: classes.inputInput,
           }}
+          onKeyPress={this.searchQuery}
           inputProps={{ 'aria-label': 'search' }}
         />
       </div>);
@@ -436,7 +446,11 @@ class Header extends React.Component {
             </IconButton>
           </DialogTitle>
           <DialogContent>
-            <Input fullWidth={true} placeholder="Search Wiki"></Input>
+            <Input 
+            onKeyPress={this.searchQuery}
+            fullWidth={true} 
+            placeholder="Search Wiki">
+            </Input>
           </DialogContent>
         </Dialog>
       </div>

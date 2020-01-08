@@ -12,6 +12,7 @@ import Stats from './Components/Stats';
 import BlogView from './Components/BlogView';
 import UserView from './Components/UserView';
 import Comments from './Components/Comments';
+import Search from './Components/Search';
 
 const THEME = createMuiTheme({
   typography: {
@@ -86,6 +87,12 @@ class App extends React.Component {
             render={(routeProps)=>{
               return(
                 <Comments isMobile={isMobile} {...routeProps}/>
+            )}}
+            />
+            <Route exact path={ClientUrls.search}
+            render={(routeProps)=>{
+              return(
+                <Search isMobile={isMobile} {...routeProps}/>
             )}}
             />
           </Switch>

@@ -6,7 +6,8 @@ export const ClientUrls = {
     'profile': '/profile',
     'view': '/:user/:id/:title',
     'userView': '/:user',
-    'comments': '/:blogId/comments'
+    'comments': '/:blogId/comments',
+    'search': '/search/:query'
 };
 
 export const urlMapper = (obj, url) => {
