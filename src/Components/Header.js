@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import PasswordInput from './UIelements/PasswordInput';
 import { Colors } from '../utils/Colors';
+import { withRouter } from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -149,11 +150,10 @@ class Header extends React.Component {
   }
 
   searchQuery = (e) => {
-    if(e.key === 'Enter') {
+    if(e.key === 'Enter' && e.target.value.replace(/\s/g,"") !== "") {
       e.preventDefault();
       this.setState({searchDialogEnable: false});
-
-      // this.props.history.push(urlMapper({query: e.target.value}, ClientUrls.search));
+      this.props.history.push(urlMapper({query: e.target.value.trim()}, ClientUrls.search));
     }
   }
   
@@ -462,4 +462,4 @@ Header.propTypes = {
   isMobile: PropTypes.bool.isRequired,
 }
 
-export default withStyles(styles)(Header);
+export default withStyles(styles)(withRouter(Header));

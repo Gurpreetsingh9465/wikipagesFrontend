@@ -65,7 +65,7 @@ class UserView extends React.Component {
         });
         this.setState({
             user: {
-                bio: 'I am a sophomore, persuing my degree in Computer Science and Engineering, and i love programming',
+                bio: 'I love programming',
                 dp : '/default.png',
                 name : 'gurpreet singh',
                 id : 'amansingh9569',
