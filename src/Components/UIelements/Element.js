@@ -47,28 +47,35 @@ class Element extends React.Component {
         return(
             <Box width={this.props.width}>
                 <Grid container>
-                    <Grid 
-                    component={RouterLink} 
-                    to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
-                    item xs={2} md={1}>
-                        <Avatar alt={this.props.name} src={this.props.user} className={classes.image}/>
-                    </Grid>
-                    <Grid item xs={6} md={9} >
-                        <Typography
-                        variant={isMobile?'body2':'body1'}>
-                        <span style={{textTransform: 'capitalize',}}>{this.props.name}</span><span> </span>
-                        {isMobile?null:<RouterLink
+                    <Grid xs={9} style={{
+                        display:'flex'
+                    }} item>
+                        <Box 
+                        style={{
+                            padding: '0px 10px'
+                        }}
+                        component={RouterLink} 
                         to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
-                        style={{color: Colors.grey, textDecoration:'underline'}}>
-                        @{this.props.id}
-                        </RouterLink>}</Typography>
-                        <Typography
-                        variant={isMobile?'body2':'body1'}
-                        style={{color: Colors.grey}}>
-                            {this.dateTime}
-                        </Typography>
+                        >
+                            <Avatar alt={this.props.name} src={this.props.user} className={classes.image}/>
+                        </Box>
+                        <Box>
+                            <Typography
+                            variant={isMobile?'body2':'body1'}>
+                            <span style={{textTransform: 'capitalize',}}>{this.props.name}</span><span> </span>
+                            {isMobile?null:<RouterLink
+                            to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
+                            style={{color: Colors.grey, textDecoration:'underline'}}>
+                            @{this.props.id}
+                            </RouterLink>}</Typography>
+                            <Typography
+                            variant={isMobile?'body2':'body1'}
+                            style={{color: Colors.grey}}>
+                                {this.dateTime}
+                            </Typography>
+                        </Box>
                     </Grid>
-                    <Grid item xs={4} md={2}>
+                    <Grid align='right' item xs={3}>
                         <Typography
                         variant={isMobile?'body2':'body1'}
                         style={{
@@ -97,6 +104,7 @@ class Element extends React.Component {
                     <ImageViewer
                     src={this.props.image}
                     title={this.props.title}
+                    crop={true}
                     height={150}
                     />
                     <Typography style={{

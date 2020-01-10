@@ -14,6 +14,7 @@ const recommend = [
     {
         image : 'https://miro.medium.com/max/1880/1*GRghp94F1x2iUQhBGXH8kQ.jpeg',
         likes : 500,
+        views: 87845,
         id: 'amansingh9569',
         user : '/default.png',
         name : 'aman',
@@ -24,6 +25,7 @@ const recommend = [
         image : 'https://miro.medium.com/max/1500/1*NVi_psRVbTcMbg3Yy7J0ug.png',
         likes : 1000,
         user : '/default.png',
+        views: 12154,
         id: 'adiprat100',
         name : 'aditya pratap singh',
         time : '2019-12-25T08:25:36',
@@ -34,6 +36,7 @@ const recommend = [
         likes : 1250,
         user : '/default.png',
         id: 'madmax784',
+        views: 874511,
         name : 'Mad Max',
         time : '2019-12-25T08:25:36',
         title: 'How-to make a react app',
