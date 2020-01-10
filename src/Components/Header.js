@@ -398,7 +398,11 @@ class Header extends React.Component {
                     </Grid>
                     <Grid item xs={9}>
                       <p style={{marginBottom:'1px'}}>{this.props.user.name}</p>
-                      <p style={{color: Colors.grey, marginTop:'1px', textDecoration:'underline'}}>@{this.props.user.id}</p>
+                      <RouterLink
+                      to={urlMapper({user: this.props.user.id}, ClientUrls.userView)} 
+                      style={{color: Colors.grey, textDecoration:'underline'}}>
+                      <span> @</span>{this.props.user.id}
+                      </RouterLink>
                     </Grid>
                   </Grid>
                   <Divider />

@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Divider, CircularProgress, Grid, Avatar, Typography, Tabs, Tab, withStyles, Box } from '@material-ui/core';
+import { Container, Divider, CircularProgress, Grid, Button, Avatar, Typography, Tabs, Tab, withStyles, Box } from '@material-ui/core';
 import Card from './UIelements/Card';
+import { Link as RouterLink } from 'react-router-dom'
 import { Colors } from '../utils/Colors';
 import { ClientUrls, urlMapper } from '../utils/Urls';
 
 const styles = (theme)=> ({
     image: {
-        width: theme.spacing(10),
-        height: theme.spacing(10),
+        width: theme.spacing(8),
+        height: theme.spacing(8),
     },
     related: {
         fontSize: '35px',
@@ -73,10 +74,10 @@ const peoples = [
         blogNo: 5
     },
     {
-        bio: 'I am an author and Co-founder of xyz.ai',
+        bio: 'Coding, machine learning, reading, sleeping, listening, potato. https://blog.contactsunny.com and https://www.linkedin.com/in/sunnysrinidhi/',
         dp : '/default.png',
-        name : 'aditya pratap singh',
-        id : 'adiprat2345',
+        name : 'Gulshan gupta',
+        id : 'gulu6969',
         blogNo: 12
     },
     {
@@ -85,6 +86,13 @@ const peoples = [
         name : 'harsh bansal',
         id : 'harch1000',
         blogNo: 5
+    },
+    {
+        bio: 'Coding, machine learning, reading, sleeping, listening, potato. https://blog.contactsunny.com and https://www.linkedin.com/in/sunnysrinidhi/',
+        dp : '/default.png',
+        name : 'Gulshan gupta',
+        id : 'gulu6969',
+        blogNo: 12
     },
 ]
 
@@ -137,22 +145,52 @@ class Search extends React.Component {
     getPeople = (people, index, classes) => {
         return(<Box key={index}>
                 <Grid container>
-                    <Grid item xs={6}>
-                        <Typography variant='h6' style={{
-                            fontWeight: 700,
-                            textTransform: 'capitalize'
+                    <Grid item xs={8} style={{
+                        display: 'flex'
+                    }}>
+                        <Box style={{
+                            margin: '0px 10px'
                         }}>
-                            {people.name}
-                        </Typography>
-                        <Typography variant='body1' style={{
-                            color: Colors.grey
-                        }}>
-                            <span> @</span>
-                            {people.id}
-                        </Typography>
+                            <Avatar alt={people.name} src={people.dp} className={classes.image}/>
+                        </Box>
+                        <Box>
+                            <Typography variant='h6' style={{
+                                fontWeight: 700,
+                                textTransform: 'capitalize'
+                            }}>
+                                {people.name}
+                            </Typography>
+                            <Typography variant='body1' style={{
+                                color: Colors.grey
+                            }}>
+                                <RouterLink
+                                to={urlMapper({user: people.id}, ClientUrls.userView)} 
+                                style={{color: Colors.grey, textDecoration:'underline'}}>
+                                <span> @</span>{people.id}
+                                </RouterLink>
+                            </Typography>
+                        </Box>
                     </Grid>
-                    <Grid align='right' item xs={6}>
-                        <Avatar alt={people.name} src={people.dp} className={classes.image}/>
+                    <Grid align='right' item xs={4}>
+                        <Button 
+                        size='small'
+                        id={people.id}
+                        onClick={(e) => {this.goToProfile(e, people.id);}}
+                        variant='outlined'
+                        disableFocusRipple
+                        disableRipple
+                        disableTouchRipple
+                        disableElevation
+                        style={{
+                            backgroundColor: 'transparent',
+                            color: Colors.green,
+                            textTransform: 'none',
+                            margin: '10px',
+                            fontSize: '12px',
+                            borderRadius: '4px'
+                        }}>
+                            Blogs
+                        </Button>
                     </Grid>
                 </Grid>
                 <br/>
@@ -188,6 +226,11 @@ class Search extends React.Component {
           this.setState({searchDialogEnable: false});
           this.props.history.push(urlMapper({query: e.target.value.trim()}, ClientUrls.search));
         }
+    }
+
+    goToProfile = (e, id) => {
+        e.preventDefault();
+        this.props.history.push(urlMapper({user: id}, ClientUrls.userView));
     }
 
     handleScroll = (e) => {

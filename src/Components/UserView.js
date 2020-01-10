@@ -60,20 +60,13 @@ class UserView extends React.Component {
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
-        let html_blogs = [];
-        blogs.forEach((blog, index) => {
-            html_blogs.push((
-                <Card key={index} {...blog}/>
-            ))
-        });
         this.setState({
             user: {
                 bio: 'I love programming',
                 dp : '/default.png',
                 name : 'gurpreet singh',
                 id : 'amansingh9569',
-            },
-            html_blogs: html_blogs
+            }
         });
     }
     

@@ -24,7 +24,7 @@ class Card extends React.Component {
         super(props);
         this.state = {
             width: window.innerWidth,
-            isBookmarked: false
+            isBookmarked: props.isBookmarked
         };
         let dateTime = new Date(Date.parse(props.time));
         this.dateTime =  months[dateTime.getMonth()]+' '+dateTime.getDate()+', ' + dateTime.getFullYear();
@@ -162,6 +162,7 @@ class Card extends React.Component {
 
 Card.propTypes = {
     image: PropTypes.string,
+    isBookmarked: PropTypes.bool,
     likes: PropTypes.number,
     title: PropTypes.string,
     user: PropTypes.string,
@@ -174,6 +175,7 @@ Card.propTypes = {
 
 Card.defaultProps = {
     image : undefined,
+    isBookmarked: false,
     likes : 0,
     user : '/default.png',
     id: 'username',
