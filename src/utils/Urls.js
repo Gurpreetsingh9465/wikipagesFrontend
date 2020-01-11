@@ -3,7 +3,7 @@ export const ClientUrls = {
     'stats': '/stats',
     'bookmarks': '/bookmarks',
     'publish': '/publish',
-    'profile': '/profile',
+    'profile': '/profile/edit',
     'view': '/:user/:id/:title',
     'userView': '/:user',
     'comments': '/:blogId/comments',

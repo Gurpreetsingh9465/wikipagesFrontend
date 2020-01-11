@@ -62,9 +62,12 @@ class App extends React.Component {
             <Route exact path={ClientUrls.bookmarks}>
               <Bookmark/>
             </Route>
-            <Route exact path={ClientUrls.profile}>
-              <Profile/>
-            </Route>
+            <Route exact path={ClientUrls.profile}
+            render={(routeProps)=>{
+              return(
+                <Profile isMobile={isMobile} {...routeProps}/>
+            )}}
+            />
             <Route exact path={ClientUrls.stats}>
               <Stats/>
             </Route>

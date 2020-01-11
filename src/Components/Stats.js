@@ -27,11 +27,11 @@ class Stats extends React.Component {
             }}>
                 <Typography variant='h5' style={{fontWeight: '700'}} align='center'>
                     Thanks, for using wikiPages.in
-                    <Divider/>
-                    <br/>
-                    <Typography variant='h6' >
-                        This feature will be available shortly.
-                    </Typography>
+                </Typography>
+                <Divider/>
+                <br/>
+                <Typography align='center' variant='h6' >
+                    This feature will be available shortly.
                 </Typography>
             </Container>
         );
