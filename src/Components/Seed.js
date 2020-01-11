@@ -29,7 +29,7 @@ export default [
     }],
     ['video', {
         attributes: {
-            caption: 'Best Song',
+            caption: 'Best Song test Best Song test Best Song test Best Song test Best Song test Best Song test Best Song test Best Song test',
             src: 'https://www.youtube.com/watch?v=ERMRWk1bwqo'    
         }
     }],

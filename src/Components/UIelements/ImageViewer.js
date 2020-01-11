@@ -48,7 +48,7 @@ class ImageViewer extends React.Component {
         const { width } = this.state;
         const isMobile = width <= 600;
         return(
-            <Box align='center'>
+            <Box onClick={this.props.onClick} align='center'>
                 <Skeleton 
                 style={{display: this.state.isLoaded?'none':''}}
                 variant="rect" 
@@ -65,14 +65,14 @@ class ImageViewer extends React.Component {
                 height={this.props.height}
                 src={this.props.src}
                 alt={this.props.title?this.props.title:this.props.caption}/>
-                <Typography
+                {this.props.overlay?null:<Typography
                 style={{
                     color: Colors.grey,
                     marginBottom: '2%'
                 }}
                 align='center'>
                     {this.props.caption}
-                </Typography>
+                </Typography>}
             </Box>
         );
     }

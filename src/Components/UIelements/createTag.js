@@ -1,12 +1,24 @@
 import React from 'react';
 import { MoreHoriz as MoreHorizIcon } from '@material-ui/icons';
-import { Typography, Container, Box } from '@material-ui/core';
+import { Typography, Container, Box, TextareaAutosize } from '@material-ui/core';
 import ImageViewer from './ImageViewer';
 import { Colors } from '../../utils/Colors';
 import VideoViewer from './VideoViewer';
 import Text from './Text';
 
-export const createTag = (tagName, tagAttribute, child, key, classes, onClick = (key)=>{}, overlay = false) => {
+const textArea = {
+    "fontFamily": "'Nunito', sans-serif",
+    fontSize: '1rem',
+    width: '100%',
+    border: 0,
+    outline: 'none',
+    fontWeight: 400,
+    resize: 'none',
+    color: Colors.grey,
+    textAlign: 'center'
+}
+
+export const createTag = (tagName, tagAttribute, child, key, classes, onClick = (key)=>{}, overlay = false, changeCaption = ()=>{}, caption = '') => {
     switch(tagName) {
         case('typography'):
             return(
@@ -22,8 +34,22 @@ export const createTag = (tagName, tagAttribute, child, key, classes, onClick = 
             );
         case('img'):
             return(
-                <Box onClick={(e)=>{onClick(e, key)}} key={key}>
-                    <ImageViewer {...tagAttribute} />
+                <Box align='center' key={key}>
+                    <ImageViewer overlay={overlay} onClick={(e)=>{onClick(e, key)}} {...tagAttribute} />
+                    {overlay?
+                    <TextareaAutosize
+                        // value={caption}
+                        placeholder="Caption"
+                        autoComplete='off'
+                        style={textArea}
+                        onChange={(e)=>{changeCaption(e,key)}}
+                        onKeyPress={(e) => {
+                            if(e.key === 'Enter') {
+                                e.preventDefault();
+                            }
+                        }}
+                    />
+                    :null}
                 </Box>
             );
         case('break'):
@@ -42,6 +68,20 @@ export const createTag = (tagName, tagAttribute, child, key, classes, onClick = 
             return (
                 <Box key={key}>
                     <VideoViewer overlay={overlay} onClick={(e)=>{onClick(e, key)}} title={key} {...tagAttribute} />
+                    {overlay?
+                    <TextareaAutosize
+                        // value={caption}
+                        placeholder="Caption"
+                        autoComplete='off'
+                        style={textArea}
+                        onChange={(e)=>{changeCaption(e,key)}}
+                        onKeyPress={(e) => {
+                            if(e.key === 'Enter') {
+                                e.preventDefault();
+                            }
+                        }}
+                    />
+                    :null}
                 </Box>
             );
         case('code'):

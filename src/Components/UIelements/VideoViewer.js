@@ -72,14 +72,14 @@ class VideoViewer extends React.Component {
                     onClick={(e)=>{this.props.onClick(e);}} 
                     style={overlay}>
                     </div>:null}
-                    <Typography
+                    {this.props.overlay?null:<Typography
                     style={{
                         color: Colors.grey,
                         marginBottom: '2%'
                     }}
                     align='center'>
                         {this.props.caption}
-                    </Typography>
+                    </Typography>}
                 </Box>
             </div>
         );

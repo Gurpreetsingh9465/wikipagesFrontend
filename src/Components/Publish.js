@@ -127,7 +127,6 @@ class Publish extends React.Component {
             videoDialog: false,
             codeDialog: false,
             videoLink: '',
-            caption: '',
             code: '',
             videoLinkError: false
         }
@@ -210,7 +209,6 @@ class Publish extends React.Component {
 
     addImage = (src) => {
         let blog = this.state.blog;
-
         blog.splice(this.state.inputNo, 0, elements.getImage(src));
         let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
         this.setState({
@@ -233,7 +231,6 @@ class Publish extends React.Component {
             videoDialog: false,
             videoLinkError: false,
             videoLink: '',
-            caption: ''
         });
     }
 
@@ -297,6 +294,14 @@ class Publish extends React.Component {
         });
     }
 
+    changeCaption = (e, key) => {
+        let blog = this.state.blog;
+        blog[key][1].attributes.caption = e.target.value;
+        this.setState({
+            blog: blog
+        });
+    }
+
     handleClosePopOverDialog = () => {
         this.setState({
             selected: -1,
@@ -316,7 +321,9 @@ class Publish extends React.Component {
                     key, 
                     this.props.classes, 
                     this.clickEvent,
-                    true));
+                    true,
+                    this.changeCaption,
+                    blog[key][1].attributes.caption));
             } else {
                 uiDown.push(createTag(value[0], 
                     value[1].attributes, 
@@ -324,7 +331,9 @@ class Publish extends React.Component {
                     key, 
                     this.props.classes, 
                     this.clickEvent,
-                    true));
+                    true,
+                    this.changeCaption,
+                    blog[key][1].attributes.caption));
             }
         });
         return {ui, inputNo, uiDown};
@@ -393,7 +402,7 @@ class Publish extends React.Component {
     addVideo = () => {
         if(this.state.videoLink.includes('vimeo') || this.state.videoLink.includes('youtube')) {
             let blog = this.state.blog;
-            blog.splice(this.state.inputNo, 0, elements.getVideo(this.state.videoLink, this.state.caption));
+            blog.splice(this.state.inputNo, 0, elements.getVideo(this.state.videoLink));
             let {ui, inputNo, uiDown} = this.getUpdatedUi(blog);
             this.setState({
                 blog: blog,
@@ -401,7 +410,6 @@ class Publish extends React.Component {
                 uiDown: uiDown,
                 inputNo: inputNo,
                 videoLink: '',
-                caption: '',
                 videoDialog: false,
                 videoLinkError: false
             });
@@ -460,12 +468,18 @@ class Publish extends React.Component {
                         vertical: 'center',
                         horizontal: 'center',
                     }}
+                    style = {{
+                        backgroundColor: 'transparent'
+                    }}
                     transformOrigin={{
                         vertical: 'center',
                         horizontal: 'center',
                     }}
                 >
                     <IconButton
+                        style = {{
+                            backgroundColor: 'transparent'
+                        }}
                         color="secondary"
                         size='small'
                         onClick={this.deleteEntry}
@@ -493,13 +507,6 @@ class Publish extends React.Component {
                         label="Video URL"
                         fullWidth
                         helperText={this.state.videoLinkError?'Invalid URL':''}
-                    />
-                    <TextField
-                        id="caption"
-                        onChange={this.onChange}
-                        margin="dense"
-                        label="Caption"
-                        fullWidth
                     />
                     </DialogContent>
                     <DialogActions>
