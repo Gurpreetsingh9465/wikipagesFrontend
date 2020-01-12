@@ -18,6 +18,7 @@ class Comments extends React.Component {
             user: {
                 id: 'amansingh9569',
                 image: '/default.png',
+
             }
         });
     }

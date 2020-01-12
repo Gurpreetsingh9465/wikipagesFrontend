@@ -4,6 +4,7 @@ import { Switch, Route, BrowserRouter } from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
 import Header from './Components/Header';
 import { ClientUrls } from './utils/Urls';
+import { fontFamily } from './utils/Strings';
 import Home from './Components/Home';
 import Bookmark from './Components/Bookmark';
 import Profile from './Components/Profile';
@@ -16,7 +17,7 @@ import Search from './Components/Search';
 
 const THEME = createMuiTheme({
   typography: {
-   "fontFamily": "'Nunito', sans-serif",
+   "fontFamily": fontFamily,
   }
 });
 

@@ -38,7 +38,7 @@ export const createTag = (tagName, tagAttribute, child, key, classes, onClick = 
                     <ImageViewer overlay={overlay} onClick={(e)=>{onClick(e, key)}} {...tagAttribute} />
                     {overlay?
                     <TextareaAutosize
-                        // value={caption}
+                        defaultValue={caption}
                         placeholder="Caption"
                         autoComplete='off'
                         style={textArea}
@@ -70,7 +70,7 @@ export const createTag = (tagName, tagAttribute, child, key, classes, onClick = 
                     <VideoViewer overlay={overlay} onClick={(e)=>{onClick(e, key)}} title={key} {...tagAttribute} />
                     {overlay?
                     <TextareaAutosize
-                        // value={caption}
+                        defaultValue={caption}
                         placeholder="Caption"
                         autoComplete='off'
                         style={textArea}

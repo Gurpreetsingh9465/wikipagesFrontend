@@ -13,9 +13,14 @@ import { Code as CodeIcon,
         FormatItalic as FormatItalicIcon,
         TextFields as TextFieldsIcon } from '@material-ui/icons';
 import { Colors } from '../utils/Colors';
+import { fontFamily } from '../utils/Strings';
 import PropTypes from 'prop-types';
 import * as elements from './UIelements/GetBlogElements';
 import { createTag } from './UIelements/createTag';
+import ContentEditable from './UIelements/ContentEditable';
+import { extractContent } from '../utils/Nformatter';
+
+const placeholder = '<span style=color:'+Colors.grey+';>Express Your Thoughts..</span>'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -49,6 +54,7 @@ const styles = theme => ({
         fontSize: '18px',
         outline: 'none',
         padding: '9px 0px 6px',
+        fontFamily: fontFamily
     },
     speedDial: {
         height: theme.spacing(2),
@@ -100,6 +106,7 @@ const styles = theme => ({
         color: Colors.black,
         fontStyle: 'italic',
         borderRadius: '5px',
+        padding: '0',
         backgroundColor: Colors.lightGreen,
         "&:hover": {
             backgroundColor: Colors.smoothGreen,
@@ -128,7 +135,8 @@ class Publish extends React.Component {
             codeDialog: false,
             videoLink: '',
             code: '',
-            videoLinkError: false
+            videoLinkError: false,
+            placeholder: placeholder
         }
         this.fileSelector = React.createRef();
         this.text = React.createRef();
@@ -323,7 +331,7 @@ class Publish extends React.Component {
                     this.clickEvent,
                     true,
                     this.changeCaption,
-                    blog[key][1].attributes.caption));
+                    blog[key][1].attributes?blog[key][1].attributes.caption:''));
             } else {
                 uiDown.push(createTag(value[0], 
                     value[1].attributes, 
@@ -333,7 +341,7 @@ class Publish extends React.Component {
                     this.clickEvent,
                     true,
                     this.changeCaption,
-                    blog[key][1].attributes.caption));
+                    blog[key][1].attributes?blog[key][1].attributes.caption:''));
             }
         });
         return {ui, inputNo, uiDown};
@@ -342,6 +350,12 @@ class Publish extends React.Component {
     onChange = (e) => {
         this.setState({
             [e.target.id]: e.target.value
+        });
+    }
+
+    contentEditableOnChange = (e) => {
+        this.setState({
+            text: e.target.value
         });
     }
 
@@ -363,15 +377,16 @@ class Publish extends React.Component {
             e.preventDefault();
             let blog = this.state.blog;
             if(this.state.textType && this.state.text !== '') {
+                let text = extractContent(this.state.text,'');
                 switch(this.state.textType) {
                     case('heading'):
-                        blog.splice(this.state.inputNo, 0, elements.getHeading(this.state.text));
+                        blog.splice(this.state.inputNo, 0, elements.getHeading(text));
                         break
                     case('subHeading'):
-                        blog.splice(this.state.inputNo, 0, elements.getSubHeading(this.state.text));
+                        blog.splice(this.state.inputNo, 0, elements.getSubHeading(text));
                         break
                     case('quote'):
-                        blog.splice(this.state.inputNo, 0, elements.getQuote(this.state.text));
+                        blog.splice(this.state.inputNo, 0, elements.getQuote(text));
                         break
                     default:
                         break
@@ -424,7 +439,8 @@ class Publish extends React.Component {
         this.text.current.className = this.props.classes.text;
         this.setState({
             textType: type,
-            textStyle: []
+            textStyle: [],
+            text: extractContent(this.state.text)
         });
     }
 
@@ -433,10 +449,35 @@ class Publish extends React.Component {
         style.forEach((c)=>{
             appliedClasses+=(this.props.classes[c]+' ');
         });
-        this.text.current.className = appliedClasses;
+        let st = '<span class="'+appliedClasses+'">&nbsp</span>';
+        let text = this.state.text+st;
         this.setState({
-            textStyle: style
+            textStyle: style,
+            text: text
         });
+        // if(window.getSelection().anchorNode !== null){
+        //     let stoff = window.getSelection().getRangeAt(0).startOffset;
+        //     let endoff = window.getSelection().getRangeAt(0).endOffset;
+
+        //     console.log(stoff, endoff)
+        //     let st = '<span class="'+appliedClasses+'">'+this.state.text.substr(stoff, endoff-stoff)+'</span>';
+        //     let text = this.state.text.substr(0,stoff)+st+this.state.text.substr(endoff);
+        //     this.setState({
+        //         textStyle: style,
+        //         text: text
+        //     });
+        // } else {
+        //     let stoff = window.getSelection().getRangeAt(0).startOffset;
+        //     let endoff = window.getSelection().getRangeAt(0).endOffset;
+
+        //     console.log(stoff, endoff)
+        //     let st = '<span class="'+appliedClasses+'">'+this.state.text.substr(stoff, endoff-stoff)+'</span>';
+        //     let text = this.state.text.substr(0,stoff)+st+this.state.text.substr(endoff);
+        //     this.setState({
+        //         textStyle: style,
+        //         text: text
+        //     });
+        // }
     }
 
     makeBold = () => {
@@ -660,7 +701,7 @@ class Publish extends React.Component {
                         </SpeedDial>
                     </Grid>
                     <Grid item xs={10} sm={11}>
-                        <TextareaAutosize
+                        {/* <TextareaAutosize
                         id='text'
                         ref={this.text}
                         value={this.state.text}
@@ -671,6 +712,25 @@ class Publish extends React.Component {
                         onFocus={()=>{this.setState({open: false})}}
                         size='medium'
                         margin="normal"
+                        /> */}
+                        <ContentEditable
+                            ref={this.text}
+                            html={this.state.text === ''?this.state.placeholder:this.state.text}
+                            onChange={this.contentEditableOnChange}
+                            disabled={false}
+                            className={classes.text}
+                            onKeyDown={this.addText}
+                            onBlur={() => {
+                                this.setState({
+                                    placeholder: placeholder
+                                })
+                            }}
+                            onFocus={()=>{
+                                this.setState({
+                                    open: false,
+                                    placeholder: ''
+                                })
+                            }}
                         />
                     </Grid>
                 </Grid>
