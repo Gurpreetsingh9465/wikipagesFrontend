@@ -18,8 +18,7 @@ class ContentEditable extends React.Component {
 		  onBlur: this.props.onBlur || this.emitChange,
 		  contentEditable: !this.props.disabled,
 		  dangerouslySetInnerHTML: {__html: html}
-		},
-		this.props.children);
+		});
 	}
   
 	shouldComponentUpdate(nextProps) {
