@@ -7,7 +7,7 @@ class PasswordInput extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showPassword: false
+            showPassword: false,
         }
     }
 
@@ -18,13 +18,14 @@ class PasswordInput extends React.Component {
     }
 
     handleChange = (event) => {
-        this.props.callBack(event.target.value);
+        this.props.onChange(event);
     }
 
     render() {
         return(
             <TextField
                 label={this.props.label}
+                id={this.props.id}
                 type={this.state.showPassword ? 'text' : 'password'}
                 onChange={this.handleChange}
                 InputProps={{endAdornment:(

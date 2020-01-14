@@ -18,7 +18,7 @@ export const nFormatter = (num, digits) => {
     return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
 
-export function extractContent(s, space) {
+export const extractContent = (s, space) => {
   var span= document.createElement('span');
   span.innerHTML= s;
   if(space) {
@@ -32,3 +32,22 @@ export function extractContent(s, space) {
   }
   return [span.textContent || span.innerText].toString().replace(/ +/g,' ');
 };
+
+export const validateEmail = (email) => {
+  let re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
+
+export const validatePassword = (password) => {
+  if(password.length >= 8) {
+    return true;
+  }
+  return false;
+}
+
+export const validate = (input) => {
+  if(!input.replace(/\s/g, '').length) {
+    return false;
+  }
+  return true;
+}

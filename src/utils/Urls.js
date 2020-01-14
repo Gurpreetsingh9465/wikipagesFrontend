@@ -10,6 +10,10 @@ export const ClientUrls = {
     'search': '/search/:query'
 };
 
+export const ServerUrl = {
+    'signUp': '/api/signup'
+}
+
 export const urlMapper = (obj, url) => {
     let newUrl = url;
     Object.entries(obj).forEach(([key,value])=>{

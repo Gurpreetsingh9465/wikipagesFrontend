@@ -1,13 +1,15 @@
 import React from "react";
-import { Container, FormControl, TextField, Divider, Grid, Menu, MenuItem, Input, Link, Dialog, IconButton, DialogContent, DialogTitle, Typography, Avatar, useScrollTrigger, Slide, InputBase, Toolbar, AppBar, Button} from "@material-ui/core";
+import { Container, FormControl, TextField, Divider, Grid, Menu, MenuItem, Input, Link, Dialog, IconButton, DialogContent, DialogTitle, Typography, Avatar, useScrollTrigger, Slide, InputBase, Toolbar, AppBar, Button } from "@material-ui/core";
 import { Search as SearchIcon, KeyboardBackspace as KeyboardBackspaceIcon, Close as CloseIcon, MailOutline as MailOutlineIcon } from "@material-ui/icons";
 import { withStyles, fade } from "@material-ui/core/styles";
-import { ClientUrls, urlMapper } from '../utils/Urls';
+import { ClientUrls, urlMapper, ServerUrl } from '../utils/Urls';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import PasswordInput from './UIelements/PasswordInput';
 import { Colors } from '../utils/Colors';
 import { withRouter } from 'react-router-dom';
+import axios from 'axios';
+import { validateEmail, validate, validatePassword } from '../utils/Nformatter';
 
 const styles = theme => ({
   root: {
@@ -146,6 +148,9 @@ class Header extends React.Component {
       showPassword: false,
       anchor: null,
       dialogElement: this.getLoginDialog(props.classes),
+      email: '',
+      name: '',
+      password: '',
     };
   }
 
@@ -162,6 +167,36 @@ class Header extends React.Component {
       showPassword: !this.state.showPassword
     });
   };
+
+  onChange = (e) => {
+    this.setState({
+      [e.target.id]: e.target.value
+    });
+  }
+
+  signUp = (e) => {
+    if(validate(this.state.name) && validate(this.state.email) && validate(this.state.password)) {
+      if(validateEmail(this.state.email)) {
+        if(validatePassword(this.state.password)) {
+          axios.post(ServerUrl.signUp,{
+            name: this.state.name.trim(),
+            email: this.state.email.trim(),
+            password: this.state.password
+          }).then((res)=>{
+            this.props.handleOpen('please check your mail');
+          }).catch((err)=>{
+            this.props.handleOpen(err.response.data.error);
+          })
+        } else {
+          this.props.handleOpen('password must be 8 character long');
+        }
+      } else {
+        this.props.handleOpen('invalid email id')
+      }
+    } else {
+      this.props.handleOpen("inputs can't be empty")
+    }
+  }
 
   handleClick = event => {
     this.setState({
@@ -219,6 +254,11 @@ class Header extends React.Component {
   }
 
   getLoginDialog = (classes, type = 'default') => {
+    this.setState({
+      name: '',
+      email: '',
+      password: ''
+    })
     if(type === 'signin') {
       return (
         <div>
@@ -235,9 +275,9 @@ class Header extends React.Component {
           </DialogTitle>
           <DialogContent align='center'>
             <FormControl fullWidth autoComplete="off">
-              <TextField label="Email" />
+              <TextField id='email' onChange={this.onChange} label="Email" />
               <br/>
-              <PasswordInput/>
+              <PasswordInput id='password' onChange={this.onChange} />
             </FormControl>
           </DialogContent>
           <DialogContent align="center">
@@ -263,17 +303,15 @@ class Header extends React.Component {
           </DialogTitle>
           <DialogContent align='center'>
             <FormControl fullWidth autoComplete="off">
-              <TextField label="Username" />
+              <TextField id='name' autoComplete='off' onChange={this.onChange} label="Username" />
               <br/>
-              <TextField label="Email" />
+              <TextField id='email' onChange={this.onChange} label="Email" />
               <br/>
-              <PasswordInput/>
-              <br/>
-              <PasswordInput label="Confirm Password" />
+              <PasswordInput id='password' onChange={this.onChange} />
             </FormControl>
           </DialogContent>
           <DialogContent align="center">
-            <Button color="primary" variant="outlined" className={classes.button}>
+            <Button onClick={this.signUp} color="primary" variant="outlined" className={classes.button}>
               Sign Up
             </Button>
           </DialogContent>
