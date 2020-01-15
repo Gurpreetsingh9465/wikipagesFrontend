@@ -4,7 +4,7 @@ import { Switch, Route, BrowserRouter } from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme, Snackbar, IconButton } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import Header from './Components/Header';
-import { ClientUrls } from './utils/Urls';
+import { ClientUrls, ServerUrl } from './utils/Urls';
 import { fontFamily } from './utils/Strings';
 import Home from './Components/Home';
 import Bookmark from './Components/Bookmark';
@@ -45,6 +45,11 @@ class App extends React.Component {
 
   componentDidMount = () => {
     window.addEventListener('resize', this.handleWindowSizeChange);
+    axios.get(ServerUrl.getUser).then((res)=>{
+      console.log(res);
+    }).catch((err)=>{
+      console.log(err.response.data);
+    });
   }
   
   componentWillUnmount = () => {

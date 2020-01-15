@@ -11,7 +11,9 @@ export const ClientUrls = {
 };
 
 export const ServerUrl = {
-    'signUp': '/api/signup'
+    'signUp': '/api/signup',
+    'signIn': '/api/login',
+    'getUser': '/api/user'
 }
 
 export const urlMapper = (obj, url) => {
