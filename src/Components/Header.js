@@ -151,9 +151,24 @@ class Header extends React.Component {
       email: '',
       name: '',
       password: '',
+      isLogin: '',
+      user: null
     };
   }
 
+  componentDidMount = () => {
+    axios.get(ServerUrl.getUser).then((res)=>{
+      this.setState({
+        user: res.data.user,
+        isLogin: true
+      });
+    }).catch((err)=>{
+      this.setState({
+        isLogin: false,
+        user: null
+      });
+    });
+  }
   searchQuery = (e) => {
     if(e.key === 'Enter' && e.target.value.replace(/\s/g,"") !== "") {
       e.preventDefault();
@@ -204,13 +219,21 @@ class Header extends React.Component {
         email: this.state.email.trim(),
         password: this.state.password
       }).then((res)=>{
-        this.props.handleOpen('Sign In successfull');
+        window.location.reload();
       }).catch((err)=>{
         this.props.handleOpen(err.response.data.error);
       });
     } else {
       this.props.handleOpen("inputs can't be empty");
     }
+  }
+
+  logOut = (e) => {
+    axios.get(ServerUrl.logout).then(()=>{
+      window.location.reload();
+    }).catch((err)=>{
+      this.props.handleOpen('something went wrong');
+    });
   }
 
   handleClick = event => {
@@ -251,13 +274,13 @@ class Header extends React.Component {
   };
 
   getLoginInfo = (classes) => {
-    if(this.props.isLogin) {
+    if(this.state.isLogin) {
       return (<Avatar 
               onClick={this.handleClick}
               id="userInfo"
               className={classes.avatar} 
-              alt={this.props.user.name} 
-              src={this.props.user.image} />);
+              alt={this.state.user?this.state.user.name:''} 
+              src={this.state.user?this.state.user.dp:'/default.png'} />);
     } else {
       return (<Button 
               size="small" 
@@ -445,16 +468,16 @@ class Header extends React.Component {
                       <div>
                         <Avatar 
                           className={classes.avatarBig} 
-                          alt={this.props.user.name} 
-                          src={this.props.user.image} />
+                          alt={this.state.user?this.state.user.name:''} 
+                          src={this.state.user?this.state.user.dp:'/default.png'} />
                       </div>
                     </Grid>
                     <Grid item xs={9}>
-                      <p style={{marginBottom:'1px'}}>{this.props.user.name}</p>
+                      <p style={{marginBottom:'1px', textTransform: 'capitalize'}}>{this.state.user?this.state.user.name:''}</p>
                       <RouterLink
-                      to={urlMapper({user: this.props.user.id}, ClientUrls.userView)} 
+                      to={this.state.user?urlMapper({id: this.state.user.id}, ClientUrls.userView):''} 
                       style={{color: Colors.grey, textDecoration:'underline'}}>
-                      <span> @</span>{this.props.user.id}
+                      <span> @</span>{this.state.user?this.state.user.id:''}
                       </RouterLink>
                     </Grid>
                   </Grid>
@@ -472,7 +495,7 @@ class Header extends React.Component {
                   <MenuItem onClick={this.handleClose} component={RouterLink} to={ClientUrls.profile} disableRipple={true}>
                     Profile
                   </MenuItem>
-                  <MenuItem onClick={this.handleClose} disableRipple={true}>
+                  <MenuItem onClick={this.logOut} disableRipple={true}>
                     Logout
                   </MenuItem>
                 </StyledMenu>
@@ -517,6 +540,15 @@ class Header extends React.Component {
 
 Header.propTypes = {
   isMobile: PropTypes.bool.isRequired,
+  user: PropTypes.object.isRequired
+}
+
+Header.defaultProps = {
+  user: {
+    id: '',
+    name: '',
+
+  }
 }
 
 export default withStyles(styles)(withRouter(Header));

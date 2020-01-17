@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Container, Divider, CircularProgress, Grid, Typography, Avatar, withStyles, Box } from '@material-ui/core';
 import Card from './UIelements/Card';
 import { Colors } from '../utils/Colors';
+import { ServerUrl } from '../utils/Urls';
+import axios from 'axios';
 
 const styles = (theme)=> ({
     image: {
@@ -53,20 +55,26 @@ class UserView extends React.Component {
         this.state = {
             user: {},
             blogs: blogs,
-            isLoading: false
+            isLoading: false,
+            userFound: false
         }
         this.container = React.createRef();
     }
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
-        this.setState({
-            user: {
-                bio: 'I love programming',
-                dp : '/default.png',
-                name : 'gurpreet singh',
-                id : 'amansingh9569',
-            }
+        const { id } = this.props.match.params;
+        axios.get(ServerUrl.getUserById+id).then((res)=>{
+            this.setState({
+                user: {
+                    bio: res.data.user.bio,
+                    dp : res.data.user.dp,
+                    name : res.data.user.name,
+                    id : res.data.user.id,
+                },
+                userFound: true
+            });
+        }).catch(()=>{
         });
     }
     
@@ -93,53 +101,57 @@ class UserView extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
-        const html_blogs = [];
-        this.state.blogs.forEach((blog, index)=>{
-            html_blogs.push(<Card {...blog} key={index}/>);
-        });
-        return(
-            <Container style={{
-                maxWidth: '600px',
-            }} ref={this.container} >
-                <br/>
-                <Grid container>
-                    <Grid item xs={6}>
-                        <Typography variant='h6' style={{
-                            fontWeight: 700,
-                            textTransform: 'capitalize'
-                        }}>
-                            {this.state.user.name}
-                        </Typography>
-                        <Typography variant='body1' style={{
-                            color: Colors.grey
-                        }}>
-                            <span> @</span>
-                            {this.state.user.id}
-                        </Typography>
+        if(this.state.userFound) {
+            const { classes } = this.props;
+            const html_blogs = [];
+            this.state.blogs.forEach((blog, index)=>{
+                html_blogs.push(<Card {...blog} key={index}/>);
+            });
+            return(
+                <Container style={{
+                    maxWidth: '600px',
+                }} ref={this.container} >
+                    <br/>
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <Typography variant='h6' style={{
+                                fontWeight: 700,
+                                textTransform: 'capitalize'
+                            }}>
+                                {this.state.user.name}
+                            </Typography>
+                            <Typography variant='body1' style={{
+                                color: Colors.grey
+                            }}>
+                                <span> @</span>
+                                {this.state.user.id}
+                            </Typography>
+                        </Grid>
+                        <Grid align='right' item xs={6}>
+                            <Avatar alt={this.state.user.name} src={this.state.user.dp} className={classes.image}/>
+                        </Grid>
                     </Grid>
-                    <Grid align='right' item xs={6}>
-                        <Avatar alt={this.state.user.name} src={this.state.user.dp} className={classes.image}/>
-                    </Grid>
-                </Grid>
-                <br/>
-                <Typography style={{
-                    fontWeight: 500
-                }}>
-                    {this.state.user.bio}
-                </Typography>
-                <br/>
-                <Divider/>
-                <br/>
-                {html_blogs}
-                <Box align='center'>
-                    {this.state.isLoading?<CircularProgress
-                    style={{
-                        color: Colors.green
-                    }}/>:null}
-                </Box>
-            </Container>
-        );
+                    <br/>
+                    <Typography style={{
+                        fontWeight: 500
+                    }}>
+                        {this.state.user.bio}
+                    </Typography>
+                    <br/>
+                    <Divider/>
+                    <br/>
+                    {html_blogs}
+                    <Box align='center'>
+                        {this.state.isLoading?<CircularProgress
+                        style={{
+                            color: Colors.green
+                        }}/>:null}
+                    </Box>
+                </Container>
+                );
+        } else {
+            return(<div></div>);
+        } 
     }
 
 }

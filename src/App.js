@@ -4,7 +4,7 @@ import { Switch, Route, BrowserRouter } from "react-router-dom";
 import { MuiThemeProvider, createMuiTheme, Snackbar, IconButton } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import Header from './Components/Header';
-import { ClientUrls, ServerUrl } from './utils/Urls';
+import { ClientUrls } from './utils/Urls';
 import { fontFamily } from './utils/Strings';
 import Home from './Components/Home';
 import Bookmark from './Components/Bookmark';
@@ -36,20 +36,11 @@ class App extends React.Component {
       width: window.innerWidth,
       open: false,
       message: '',
-      user : {
-        name: 'Gurpreet Singh',
-        id: 'amansingh9569',
-        image: 'default.png'
-      }
-  }};
+    }
+  };
 
   componentDidMount = () => {
     window.addEventListener('resize', this.handleWindowSizeChange);
-    axios.get(ServerUrl.getUser).then((res)=>{
-      console.log(res);
-    }).catch((err)=>{
-      console.log(err.response.data);
-    });
   }
   
   componentWillUnmount = () => {
@@ -80,7 +71,7 @@ class App extends React.Component {
     return (
         <MuiThemeProvider theme={THEME}>
           <BrowserRouter>
-            <Header handleOpen={this.handleOpen} isMobile={isMobile} user={this.state.user} isLogin={false}/>
+            <Header handleOpen={this.handleOpen} isMobile={isMobile} />
             <br/>
             <br/>
             <br/>
@@ -95,7 +86,7 @@ class App extends React.Component {
               <Route exact path={ClientUrls.profile}
               render={(routeProps)=>{
                 return(
-                  <Profile isMobile={isMobile} {...routeProps}/>
+                  <Profile handleOpen={this.handleOpen} isMobile={isMobile} {...routeProps}/>
               )}}
               />
               <Route exact path={ClientUrls.stats}>

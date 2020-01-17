@@ -55,7 +55,7 @@ class Element extends React.Component {
                             padding: '0px 10px'
                         }}
                         component={RouterLink} 
-                        to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
+                        to={urlMapper({id: this.props.id}, ClientUrls.userView)} 
                         >
                             <Avatar alt={this.props.name} src={this.props.user} className={classes.image}/>
                         </Box>
@@ -64,7 +64,7 @@ class Element extends React.Component {
                             variant={isMobile?'body2':'body1'}>
                             <span style={{textTransform: 'capitalize',}}>{this.props.name}</span><span> </span>
                             {isMobile?null:<RouterLink
-                            to={urlMapper({user: this.props.id}, ClientUrls.userView)} 
+                            to={urlMapper({id: this.props.id}, ClientUrls.userView)} 
                             style={{color: Colors.grey, textDecoration:'underline'}}>
                             @{this.props.id}
                             </RouterLink>}</Typography>

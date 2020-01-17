@@ -5,7 +5,7 @@ export const ClientUrls = {
     'publish': '/publish',
     'profile': '/profile/edit',
     'view': '/:user/:id/:title',
-    'userView': '/:user',
+    'userView': '/:id',
     'comments': '/:blogId/comments',
     'search': '/search/:query'
 };
@@ -13,7 +13,11 @@ export const ClientUrls = {
 export const ServerUrl = {
     'signUp': '/api/signup',
     'signIn': '/api/login',
-    'getUser': '/api/user'
+    'logout': '/api/logout',
+    'getUser': '/api/user',
+    'updateUser': '/api/update',
+    'upload': '/api/utils/upload',
+    'getUserById': '/api/getUserById?id='
 }
 
 export const urlMapper = (obj, url) => {
