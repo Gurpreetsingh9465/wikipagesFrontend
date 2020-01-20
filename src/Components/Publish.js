@@ -19,6 +19,8 @@ import * as elements from './UIelements/GetBlogElements';
 import { createTag } from './UIelements/createTag';
 import ContentEditable from './UIelements/ContentEditable';
 import { extractContent } from '../utils/Nformatter';
+import { ServerUrl, ClientUrls, urlMapper } from '../utils/Urls';
+import axios from 'axios';
 
 const placeholder = '<span style=color:'+Colors.grey+';>Express Your Thoughts..</span>'
 
@@ -53,8 +55,13 @@ const styles = theme => ({
         border: 0,
         fontSize: '18px',
         outline: 'none',
-        padding: '9px 0px 6px',
+        padding: '6px 0px 6px',
         fontFamily: fontFamily
+    },
+    url: {
+        margin: theme.spacing(0.5),
+        border: 'none',
+        padding: theme.spacing(0, 1),
     },
     speedDial: {
         height: theme.spacing(2),
@@ -121,9 +128,12 @@ class Publish extends React.Component {
         this.state = {
             open: false,
             blog: [],
+            title: '',
             anchor: null,
+            id: '',
             selected: -1,
             inputNo: 0,
+            openLink: false,
             popoverDialog: false,
             ui: [],
             uiDown: [],
@@ -144,6 +154,64 @@ class Publish extends React.Component {
 
     componentDidMount() {
         document.addEventListener("keydown", this._handleKeyDown);
+        const { id } = this.props.match.params;
+        this.newBlog(id);
+    }
+
+    UNSAFE_componentWillReceiveProps(props) {
+        const { id } = props.match.params;
+        if(id === ':id') {
+            axios.post(ServerUrl.saveToDraft,{
+                title: '',
+                blog: [],
+                id: id,
+            }).then((res)=>{
+                const url = urlMapper({id: res.data.id}, ClientUrls.publish);
+                this.props.history.replace(url);
+                this.setState({
+                    blog: [],
+                    title: '',
+                    inputNo: 0,
+                    ui: [],
+                    uiDown: [],
+                    id: res.data.id
+                });
+            }).catch((err)=>{
+                this.props.handleOpen('something went wrong');
+            });
+        }
+    }
+
+    newBlog = (id) => {
+        if(id === ':id') {
+            axios.post(ServerUrl.saveToDraft,{
+                title: this.state.title,
+                blog: this.state.blog,
+                id: id,
+            }).then((res)=>{
+                const url = urlMapper({id: res.data.id}, ClientUrls.publish);
+                this.props.history.replace(url);
+                this.setState({
+                    id: res.data.id
+                })
+            }).catch((err)=>{
+                this.props.handleOpen('something went wrong');
+            });
+        } else {
+            axios.get(ServerUrl.getDraft+id).then((res)=>{
+                let {ui, inputNo, uiDown} = this.getUpdatedUi(res.data.draft.blog, res.data.draft.blog.length+1);
+                this.setState({
+                    blog: res.data.draft.blog,
+                    title: res.data.draft.title,
+                    inputNo: inputNo,
+                    ui: ui,
+                    uiDown: uiDown,
+                    id: id
+                });
+            }).catch((err)=>{
+                this.props.handleOpen(err.response.data.error)
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -171,12 +239,30 @@ class Publish extends React.Component {
     }
 
     saveBlog = () => {
-        console.log(this.state.blog);
-    } 
+        axios.post(ServerUrl.saveToDraft,{
+            title: this.state.title,
+            blog: this.state.blog,
+            id: this.state.id
+        }).then(()=>{
+            this.props.handleOpen('saved to draft');
+        }).catch((err)=>{
+            if(err.response) {
+                this.props.handleOpen(err.response.data.error);
+            } else {
+                this.props.handleOpen('something went wrong');
+            }
+        })
+    }
 
     handleFileChange = (e) => {
         if(e.target.files.length > 0) {
-            this.addImage(URL.createObjectURL(e.target.files[0]))
+            const form = new FormData();
+            form.append('file', e.target.files[0]);
+            axios.post(ServerUrl.upload, form).then((res)=>{
+                this.addImage(res.data.url);
+            }).catch((err)=>{
+                this.props.handleOpen(err.response.data.error);
+            });
         }
     }
 
@@ -455,29 +541,29 @@ class Publish extends React.Component {
             textStyle: style,
             text: text
         });
-        // if(window.getSelection().anchorNode !== null){
-        //     let stoff = window.getSelection().getRangeAt(0).startOffset;
-        //     let endoff = window.getSelection().getRangeAt(0).endOffset;
+        if(window.getSelection().anchorNode !== null){
+            let stoff = window.getSelection().getRangeAt(0).startOffset;
+            let endoff = window.getSelection().getRangeAt(0).endOffset;
 
-        //     console.log(stoff, endoff)
-        //     let st = '<span class="'+appliedClasses+'">'+this.state.text.substr(stoff, endoff-stoff)+'</span>';
-        //     let text = this.state.text.substr(0,stoff)+st+this.state.text.substr(endoff);
-        //     this.setState({
-        //         textStyle: style,
-        //         text: text
-        //     });
-        // } else {
-        //     let stoff = window.getSelection().getRangeAt(0).startOffset;
-        //     let endoff = window.getSelection().getRangeAt(0).endOffset;
+            console.log(stoff, endoff)
+            let st = '<span class="'+appliedClasses+'">'+this.state.text.substr(stoff, endoff-stoff)+'</span>';
+            let text = this.state.text.substr(0,stoff)+st+this.state.text.substr(endoff);
+            this.setState({
+                textStyle: style,
+                text: text
+            });
+        } else {
+            let stoff = window.getSelection().getRangeAt(0).startOffset;
+            let endoff = window.getSelection().getRangeAt(0).endOffset;
 
-        //     console.log(stoff, endoff)
-        //     let st = '<span class="'+appliedClasses+'">'+this.state.text.substr(stoff, endoff-stoff)+'</span>';
-        //     let text = this.state.text.substr(0,stoff)+st+this.state.text.substr(endoff);
-        //     this.setState({
-        //         textStyle: style,
-        //         text: text
-        //     });
-        // }
+            console.log(stoff, endoff)
+            let st = '<span class="'+appliedClasses+'">'+this.state.text.substr(stoff, endoff-stoff)+'</span>';
+            let text = this.state.text.substr(0,stoff)+st+this.state.text.substr(endoff);
+            this.setState({
+                textStyle: style,
+                text: text
+            });
+        }
     }
 
     makeBold = () => {
@@ -591,6 +677,9 @@ class Publish extends React.Component {
                     <Grid item xs={10} sm={11}>
                     <input
                     placeholder="Title"
+                    id='title'
+                    value={this.state.title}
+                    onChange={this.onChange}
                     style={{
                         fontSize: '34px', 
                         fontWeight: 700,
@@ -630,9 +719,9 @@ class Publish extends React.Component {
                                 <ToggleButton value="subHeading" title="Sub Heading">
                                     <TextFieldsIcon style={{fontSize: '15px'}} />
                                 </ToggleButton>
-                                </StyledToggleButtonGroup>
-                                <Divider orientation="vertical" className={classes.divider} />
-                                <StyledToggleButtonGroup
+                            </StyledToggleButtonGroup>
+                            <Divider orientation="vertical" className={classes.divider} />
+                            <StyledToggleButtonGroup
                                 size="small"
                                 value={this.state.textStyle}
                                 onChange={this.handleTextStyle}
@@ -657,6 +746,11 @@ class Publish extends React.Component {
                                     <LinkIcon />
                                 </ToggleButton>
                             </StyledToggleButtonGroup>
+                            <TextField
+                                placeholder='Paste Your Link'
+                                fullWidth
+                                className={classes.url}
+                            />
                         </Paper>
                     </Grid>
                 </Grid>
@@ -673,7 +767,6 @@ class Publish extends React.Component {
                                 backgroundColor: Colors.blue,
                                 width: '36px'
                         }}}
-                        // onClose={this.handleClose}
                         onClick={this.handleToggle}
                         open={this.state.open}
                         direction='down'

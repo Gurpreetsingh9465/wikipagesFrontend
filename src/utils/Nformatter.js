@@ -18,6 +18,22 @@ export const nFormatter = (num, digits) => {
     return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
 
+export const timeDifference = (milliseconds) => {
+  const seconds = milliseconds / 1000;
+  const minutes = seconds / 60;
+  const hours = minutes / 60;
+  const days = hours / 24;
+  if(Math.floor(days) !== 0) {
+    return Math.floor(days)+' days ago';
+  } else if(Math.floor(hours) !== 0) {
+    return Math.floor(hours)+' hours ago';
+  } else if(Math.floor(minutes) !== 0) {
+    return Math.floor(minutes)+' minutes ago';
+  } else {
+    return Math.floor(seconds)+' seconds ago';
+  }
+}
+
 export const extractContent = (s, space) => {
   var span= document.createElement('span');
   span.innerHTML= s;

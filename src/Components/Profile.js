@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Divider, Button, Grid, Avatar, withStyles, TextareaAutosize, IconButton } from '@material-ui/core';
+import { Container, Divider, Button, Grid, Avatar, withStyles, TextareaAutosize, IconButton, Tabs, Tab, Typography, Box } from '@material-ui/core';
 import { Colors } from '../utils/Colors';
 import { urlMapper, ClientUrls, ServerUrl } from '../utils/Urls';
 import axios from 'axios';
-import { PhotoCamera as CameraIcon } from '@material-ui/icons';
+import { PhotoCamera as CameraIcon, Delete } from '@material-ui/icons';
+import { timeDifference, validate } from '../utils/Nformatter';
 
 const styles = (theme)=> ({
     image: {
@@ -34,7 +35,6 @@ const styles = (theme)=> ({
     }
 });
 
-
 class Profile extends React.Component {
 
     constructor(props) {
@@ -44,7 +44,10 @@ class Profile extends React.Component {
             dp : '',
             name : '',
             id : '',
-            isLogin: false
+            isLogin: false,
+            drafts: [],
+            blogs: [],
+            tabValue: 0,
         }
         this.fileSelector = React.createRef();
     }
@@ -60,12 +63,76 @@ class Profile extends React.Component {
             });
         }).catch(()=>{
         });
+        this.updateDrafts();
+    }
+
+    updateDrafts = () => {
+        axios.get(ServerUrl.getDrafts+this.state.drafts.length).then((res)=>{
+            this.setState({
+                drafts: [...this.state.drafts,...res.data.drafts]
+            });
+        }).catch((err)=>{
+            this.props.handleOpen(err.response.data.error);
+        })
     }
 
     onChange = (e) => {
         this.setState({
             [e.target.id]: e.target.value
         });
+    }
+
+    handleTabValueChange = (e, newValue) => {
+        this.setState({
+            tabValue: newValue
+        });
+    }
+
+    deleteDraft = (id, key) => {
+        axios.delete(ServerUrl.deleteDraft+id).then(()=>{
+            let drafts = this.state.drafts;
+            drafts.splice(key,1);
+            this.setState({
+                drafts: drafts
+            });
+            this.props.handleOpen('deleted');
+        }).catch((err)=>{
+            this.props.handleOpen('something went wrong');
+        })
+    }
+
+    getDraft = (draft, key) => {
+        const date = new Date(draft.updatedAt);
+        const current = new Date();
+        return (<Box key={key}>
+            <br/>
+            <Grid container>
+                <Grid onClick={()=>{
+                this.props.history.push(urlMapper({id: draft._id}, ClientUrls.publish));
+                }} item xs={10}>
+                    <Typography variant='h5'>
+                        {validate(draft.title)?draft.title:'Untitled'}
+                    </Typography>
+                    <Typography style={{textTransform:'capitalize'}} variant='body1'>
+                        {'updated '+timeDifference(current-date)}
+                    </Typography>
+                </Grid>
+                <Grid item xs={2} align='right'>
+                    <IconButton 
+                    style={{
+                        color: Colors.red
+                    }}
+                    title='delete'
+                    onClick={()=>{
+                        this.deleteDraft(draft._id, key)
+                    }}>
+                        <Delete/>
+                    </IconButton>
+                </Grid>
+            </Grid>
+            <br/>
+            <Divider/>
+        </Box>);
     }
 
     handleFileChange = (e) => {
@@ -94,7 +161,7 @@ class Profile extends React.Component {
             dp: this.state.dp,
             bio: this.state.bio
         }).then(()=>{
-            window.location.reload();
+            this.props.handleOpen('account updated');
         }).catch((err)=>{
             this.props.handleOpen(err.response.data.error);
         });
@@ -108,6 +175,10 @@ class Profile extends React.Component {
     render() {
         const { classes } = this.props;
         if(this.state.isLogin) {
+            const draftUi = [];
+            this.state.drafts.forEach((draft, index)=>{
+                draftUi.push(this.getDraft(draft, index));
+            })
             return(
                 <Container style={{
                     maxWidth: '700px',
@@ -194,6 +265,34 @@ class Profile extends React.Component {
                     }}>
                         Cancel
                     </Button>
+                    <br/>
+                    <br/>
+                    <Divider/>
+                    <Tabs
+                    value={this.state.tabValue}
+                    onChange={this.handleTabValueChange}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered
+                    >
+                        <Tab 
+                        disableFocusRipple 
+                        disableRipple 
+                        disableTouchRipple 
+                        style={{
+                            textTransform: 'capitalize'
+                        }} 
+                        label="Drafts" />
+                        <Tab 
+                        disableFocusRipple 
+                        disableRipple 
+                        disableTouchRipple 
+                        style={{
+                            textTransform: 'capitalize'
+                        }} 
+                        label="Blogs" />
+                    </Tabs>
+                    {this.state.tabValue === 0?draftUi:null}
                 </Container>
             );
         } else {

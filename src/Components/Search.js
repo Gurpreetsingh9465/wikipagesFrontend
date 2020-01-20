@@ -4,7 +4,8 @@ import { Container, Divider, CircularProgress, Grid, Button, Avatar, Typography,
 import Card from './UIelements/Card';
 import { Link as RouterLink } from 'react-router-dom'
 import { Colors } from '../utils/Colors';
-import { ClientUrls, urlMapper } from '../utils/Urls';
+import { ClientUrls, urlMapper, ServerUrl } from '../utils/Urls';
+import axios from 'axios';
 
 const styles = (theme)=> ({
     image: {
@@ -51,62 +52,17 @@ const blogs = [
     }
 ]
 
-const peoples = [
-    {
-        bio: 'I love programming',
-        dp : '/default.png',
-        name : 'gurpreet singh',
-        id : 'amansingh9569',
-        blogNo: 8
-    },
-    {
-        bio: 'I am an author and Co-founder of xyz.ai',
-        dp : '/default.png',
-        name : 'aditya pratap singh',
-        id : 'adiprat2345',
-        blogNo: 12
-    },
-    {
-        bio: 'I am a blockchain expert at xyz.block',
-        dp : '/default.png',
-        name : 'harsh bansal',
-        id : 'harch1000',
-        blogNo: 5
-    },
-    {
-        bio: 'Coding, machine learning, reading, sleeping, listening, potato. https://blog.contactsunny.com and https://www.linkedin.com/in/sunnysrinidhi/',
-        dp : '/default.png',
-        name : 'Gulshan gupta',
-        id : 'gulu6969',
-        blogNo: 12
-    },
-    {
-        bio: 'I am a blockchain expert at xyz.block',
-        dp : '/default.png',
-        name : 'harsh bansal',
-        id : 'harch1000',
-        blogNo: 5
-    },
-    {
-        bio: 'Coding, machine learning, reading, sleeping, listening, potato. https://blog.contactsunny.com and https://www.linkedin.com/in/sunnysrinidhi/',
-        dp : '/default.png',
-        name : 'Gulshan gupta',
-        id : 'gulu6969',
-        blogNo: 12
-    },
-]
-
 class Search extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(props.match.params.query);
         this.state = {
             blogs: [],
             peoples: [],
             isLoading: true,
             search: props.match.params.query,
-            tabValue: 0
+            tabValue: 0,
+            endOfPeople: false
         }
         this.container = React.createRef();
     }
@@ -119,10 +75,22 @@ class Search extends React.Component {
 
     handleChange = (e, newValue) => {
         if(newValue === 1) {
-            this.setState({
-                tabValue: newValue,
-                peoples: peoples
-            })
+            const url = ServerUrl.getUsers+'?q='+this.props.match.params.query;
+            axios.get(url).then((res)=>{
+                if(res.data.length !== 0) {
+                    this.setState({
+                        tabValue: newValue,
+                        peoples: res.data,
+                        endOfPeople: false
+                    }); 
+                } else {
+                    this.setState({
+                        endOfPeople: true
+                    })
+                }
+            }).catch((err)=>{
+                this.props.handleOpen(err.response.data.error);
+            });
         } else {
             this.setState({
                 tabValue: newValue
@@ -164,7 +132,7 @@ class Search extends React.Component {
                                 color: Colors.grey
                             }}>
                                 <RouterLink
-                                to={urlMapper({user: people.id}, ClientUrls.userView)} 
+                                to={urlMapper({id: people.id}, ClientUrls.userView)} 
                                 style={{color: Colors.grey, textDecoration:'underline'}}>
                                 <span> @</span>{people.id}
                                 </RouterLink>
@@ -212,19 +180,47 @@ class Search extends React.Component {
                 isLoading: false
             });
         } else {
-            this.setState({
-                peoples: [...this.state.peoples, ...peoples],
-                isLoading: false
+            const url = ServerUrl.getUsers+'?q='+this.props.match.params.query+'&skip='+this.state.peoples.length;
+            axios.get(url).then((res)=>{
+                if(res.data.length >= 1) {
+                    this.setState({
+                        peoples: [...this.state.peoples, ...res.data],
+                        isLoading: false,
+                        endOfPeople: false
+                    });
+                } else {
+                    this.setState({
+                        isLoading: false,
+                        endOfPeople: true
+                    });
+                    this.props.handleOpen('no user found');
+                }
+            }).catch((err)=>{
+                this.setState({
+                    isLoading: false
+                })
+                this.props.handleOpen(err.response.data.error);
             });
         }
-        
     }
 
     searchQuery = (e) => {
         if(e.key === 'Enter' && e.target.value.replace(/\s/g,"") !== "") {
-          e.preventDefault();
-          this.setState({searchDialogEnable: false});
-          this.props.history.push(urlMapper({query: e.target.value.trim()}, ClientUrls.search));
+            e.preventDefault();
+            if(e.target.value.trim().length>=1) {
+                const url = ServerUrl.getUsers+'?q='+e.target.value.trim();
+                axios.get(url).then((res)=>{
+                    this.setState({
+                        peoples: res.data,
+                        searchDialogEnable: false,
+                        endOfPeople: false
+                    }); 
+                }).catch((err)=>{
+                    this.setState({searchDialogEnable: false});
+                    this.props.handleOpen(err.response.data.error);
+                });
+                this.props.history.push(urlMapper({query: e.target.value.trim()}, ClientUrls.search));
+            }
         }
     }
 
@@ -236,10 +232,12 @@ class Search extends React.Component {
     handleScroll = (e) => {
         const bottom = this.container.current?Math.floor(this.container.current.getBoundingClientRect().bottom) <= window.innerHeight:false;
         if (bottom && this.state.isLoading === false) {
-            this.setState({
-                isLoading: true
-            });
-            setTimeout(()=>{this.expandBlog()},1000);
+            if(!this.state.endOfPeople) {
+                this.setState({
+                    isLoading: true
+                });
+                this.expandBlog();
+            }
         }
     }
 

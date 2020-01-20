@@ -26,7 +26,7 @@ class Stats extends React.Component {
                 maxWidth: '800px',
             }}>
                 <Typography variant='h5' style={{fontWeight: '700'}} align='center'>
-                    Thanks, for using wikiPages.in
+                    Thanks for using wikiPages.in
                 </Typography>
                 <Divider/>
                 <br/>

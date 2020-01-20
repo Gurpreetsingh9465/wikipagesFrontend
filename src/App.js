@@ -92,9 +92,12 @@ class App extends React.Component {
               <Route exact path={ClientUrls.stats}>
                 <Stats/>
               </Route>
-              <Route exact path={ClientUrls.publish}>
-                <Publish isMobile={isMobile}/>
-              </Route>
+              <Route exact path={ClientUrls.publish}
+              render={(routeProps)=>{
+                return(
+                  <Publish handleOpen={this.handleOpen} isMobile={isMobile} {...routeProps}/>
+              )}}
+              />
               <Route exact path={ClientUrls.view}
               render={(routeProps)=>{
                 return(
@@ -116,7 +119,7 @@ class App extends React.Component {
               <Route exact path={ClientUrls.search}
               render={(routeProps)=>{
                 return(
-                  <Search isMobile={isMobile} {...routeProps}/>
+                  <Search handleOpen={this.handleOpen} isMobile={isMobile} {...routeProps}/>
               )}}
               />
             </Switch>

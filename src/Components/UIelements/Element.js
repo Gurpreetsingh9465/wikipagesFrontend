@@ -88,7 +88,7 @@ class Element extends React.Component {
                         style={{
                             fontWeight: 400,
                             color: Colors.grey,
-                        }}>{ nFormatter(this.props.likes, 1) + ' loves it'}</Typography>
+                        }}>{ nFormatter(this.props.likes, 1) + ' love it'}</Typography>
                     </Grid>
                 </Grid>
                 <br/>
