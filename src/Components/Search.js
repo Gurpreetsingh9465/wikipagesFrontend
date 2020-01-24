@@ -74,18 +74,23 @@ class Search extends React.Component {
     }
 
     handleChange = (e, newValue) => {
+        this.setState({
+            tabValue: newValue,
+            isLoading: true
+        });
         if(newValue === 1) {
             const url = ServerUrl.getUsers+'?q='+this.props.match.params.query;
             axios.get(url).then((res)=>{
                 if(res.data.length !== 0) {
                     this.setState({
-                        tabValue: newValue,
                         peoples: res.data,
-                        endOfPeople: false
+                        endOfPeople: false,
+                        isLoading: false
                     }); 
                 } else {
                     this.setState({
-                        endOfPeople: true
+                        endOfPeople: true,
+                        isLoading: false
                     })
                 }
             }).catch((err)=>{
@@ -93,8 +98,8 @@ class Search extends React.Component {
             });
         } else {
             this.setState({
-                tabValue: newValue
-            });
+                isLoading: false
+            })
         }
     }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Paper, Divider, TextareaAutosize, Popover, Typography, IconButton, TextField, Slide, Grid, withStyles, DialogTitle, Button, Dialog, DialogActions, DialogContent, AppBar, Toolbar } from '@material-ui/core';
+import { Container, Paper, Divider, Fab, TextareaAutosize, Popover, Typography, IconButton, TextField, Slide, Grid, withStyles, DialogTitle, Button, Dialog, DialogActions, DialogContent, AppBar, Toolbar } from '@material-ui/core';
 import { SpeedDial, ToggleButton, ToggleButtonGroup, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 import { Code as CodeIcon, 
         Close as CloseIcon, 
@@ -49,6 +49,13 @@ const styles = theme => ({
     title: {
         marginLeft: theme.spacing(2),
         flex: 1,
+    },
+    fab: {
+        position: 'fixed',
+        bottom: theme.spacing(5),
+        right: theme.spacing(5),
+        textTransform: 'Capitalize',
+        backgroundColor: Colors.blue
     },
     text: {
         width: '100%',
@@ -396,6 +403,12 @@ class Publish extends React.Component {
         });
     }
 
+    publishBlog = () => {
+        this.saveBlog();
+        const url = urlMapper({id: this.state.id}, ClientUrls.publishBlog);
+        this.props.history.push(url);
+    }
+
     handleClosePopOverDialog = () => {
         this.setState({
             selected: -1,
@@ -586,256 +599,262 @@ class Publish extends React.Component {
     render() {
         const { classes } = this.props;
         return(
-            <Container maxWidth='md'>
-                <Popover
-                    open={this.state.popoverDialog}
-                    anchorEl={this.state.anchor}
-                    onClose={this.handleClosePopOverDialog}
-                    anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'center',
-                    }}
-                    style = {{
-                        backgroundColor: 'transparent'
-                    }}
-                    transformOrigin={{
-                        vertical: 'center',
-                        horizontal: 'center',
-                    }}
-                >
-                    <IconButton
+            <div>
+                <Container maxWidth='md'>
+                    <Popover
+                        open={this.state.popoverDialog}
+                        anchorEl={this.state.anchor}
+                        onClose={this.handleClosePopOverDialog}
+                        anchorOrigin={{
+                            vertical: 'center',
+                            horizontal: 'center',
+                        }}
                         style = {{
                             backgroundColor: 'transparent'
                         }}
-                        color="secondary"
-                        size='small'
-                        onClick={this.deleteEntry}
+                        transformOrigin={{
+                            vertical: 'center',
+                            horizontal: 'center',
+                        }}
                     >
-                        <DeleteIcon />
-                    </IconButton>
-                </Popover>
-                <input 
-                style={{display: 'none'}} 
-                type='file' 
-                ref={this.fileSelector} 
-                onChange={this.handleFileChange}
-                accept='image/png, image/jpg, image/jpeg, image/gif' />
-                <Dialog id='video' open={this.state.videoDialog} onClose={this.handleCloseVideoDialog}>
-                    <DialogTitle>
-                        Paste Video URL from Youtube/Vimeo
-                    </DialogTitle>
-                    <DialogContent>
-                    <TextField
-                        error={this.state.videoLinkError}
-                        autoFocus
-                        id="videoLink"
-                        margin="dense"
-                        onChange={this.onChange}
-                        label="Video URL"
-                        fullWidth
-                        helperText={this.state.videoLinkError?'Invalid URL':''}
-                    />
-                    </DialogContent>
-                    <DialogActions>
-                    <Button onClick={this.handleCloseVideoDialog} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={this.addVideo} color="primary">
-                        Add Video
-                    </Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog fullScreen open={this.state.codeDialog} onClose={this.handleCloseCodeDialog} TransitionComponent={Transition}>
-                    <AppBar className={classes.appBar}>
-                        <Toolbar>
-                            <IconButton edge="start" color="inherit" onClick={this.handleCloseCodeDialog} aria-label="close">
-                            <CloseIcon />
-                            </IconButton>
-                            <Typography variant="h6" className={classes.title}>
-                            Enter Your Code
-                            </Typography>
-                            <Button autoFocus color="inherit" onClick={this.addCode}>
-                            Add Code
-                            </Button>
-                        </Toolbar>
-                    </AppBar>
-                    <DialogContent style={{margin:'0.2rem'}} >
-                        <TextareaAutosize
-                        autoFocus
-                        rowsMin={30}
-                        placeholder="Code"
-                        id='code'
-                        className={classes.codeArea}
-                        onChange={this.onChange}
-                        />
-                    </DialogContent>
-                </Dialog>
-                <p style={{color: Colors.grey}}>Press Ctrl+s To save in draft</p>
-                <Grid container spacing={0}>
-                    <Grid item xs={2} sm={1}>
-                    </Grid>
-                    <Grid item xs={10} sm={11}>
-                    <input
-                    placeholder="Title"
-                    id='title'
-                    value={this.state.title}
-                    onChange={this.onChange}
-                    style={{
-                        fontSize: '34px', 
-                        fontWeight: 700,
-                        width: '100%',
-                        border: 0,
-                        outline: 'none'
-                    }}
-                    />
-                    </Grid>
-                </Grid>
-                <Grid container spacing ={0}>
-                    <Grid item xs={2} sm={1}>
-                    </Grid>
-                    <Grid item xs={10} sm={11}>
-                        {this.state.ui}
-                    </Grid>
-                </Grid>
-                <br/>
-                <Grid container spacing ={0}>
-                    <Grid item xs={2} sm={1}>
-                    </Grid>
-                    <Grid item xs={10} sm={11}>
-                        <Paper elevation={0} className={classes.paper}>
-                            <StyledToggleButtonGroup
-                            size="small"
-                            value={this.state.textType}
-                            exclusive
-                            onChange={this.handleTextType}
-                            aria-label="text type"
-                            >
-                                <ToggleButton value="quote" title="Centered">
-                                    <FormatQuoteIcon />
-                                </ToggleButton>
-                                <ToggleButton value="heading" title="Heading">
-                                    <TextFieldsIcon />
-                                </ToggleButton>
-                                <ToggleButton value="subHeading" title="Sub Heading">
-                                    <TextFieldsIcon style={{fontSize: '15px'}} />
-                                </ToggleButton>
-                            </StyledToggleButtonGroup>
-                            <Divider orientation="vertical" className={classes.divider} />
-                            <StyledToggleButtonGroup
-                                size="small"
-                                value={this.state.textStyle}
-                                onChange={this.handleTextStyle}
-                                aria-label="text style"
-                                >
-                                <ToggleButton 
-                                disabled={this.state.textType?true:false} 
-                                value="bold" 
-                                title="bold">
-                                    <FormatBoldIcon />
-                                </ToggleButton>
-                                <ToggleButton 
-                                disabled={this.state.textType?true:false}
-                                value="italic" 
-                                title="italic">
-                                    <FormatItalicIcon />
-                                </ToggleButton>
-                                <ToggleButton 
-                                disabled={this.state.textType?true:false}
-                                value="link" 
-                                title="link">
-                                    <LinkIcon />
-                                </ToggleButton>
-                            </StyledToggleButtonGroup>
-                            <TextField
-                                placeholder='Paste Your Link'
-                                fullWidth
-                                className={classes.url}
-                            />
-                        </Paper>
-                    </Grid>
-                </Grid>
-                <br/>
-                <Grid container spacing={0}>
-                    <Grid item xs={2} sm={1}>
-                        <SpeedDial
-                        className={classes.speedDial}
-                        ariaLabel="Add Image, Video etc.."
-                        icon={<SpeedDialIcon />}
-                        FabProps={{ 
-                            size: "small", 
-                            style: { 
-                                backgroundColor: Colors.blue,
-                                width: '36px'
-                        }}}
-                        onClick={this.handleToggle}
-                        open={this.state.open}
-                        direction='down'
+                        <IconButton
+                            style = {{
+                                backgroundColor: 'transparent'
+                            }}
+                            color="secondary"
+                            size='small'
+                            onClick={this.deleteEntry}
                         >
-                            <SpeedDialAction
-                                icon={<PlayIcon/>}
-                                tooltipTitle="Add YouTube, Vimeo Video"
-                                onClick={this.handleOpenVideoDialog}
-                            />
-                            <SpeedDialAction
-                                icon={<WallpaperIcon/>}
-                                tooltipTitle="Add Image"
-                                onClick={this.handleFileSelect}
-                            />
-                            <SpeedDialAction
-                                icon={<HorizIcon/>}
-                                tooltipTitle="Add Break Point"
-                                onClick={this.addBreakPoint}
-                            />
-                            <SpeedDialAction
-                                icon={<CodeIcon/>}
-                                tooltipTitle="Add Code"
-                                onClick={this.handleOpenCodeDialog}
-                            />
-                        </SpeedDial>
-                    </Grid>
-                    <Grid item xs={10} sm={11}>
-                        {/* <TextareaAutosize
-                        id='text'
-                        ref={this.text}
-                        value={this.state.text}
-                        onChange={this.onChange}
-                        onKeyDown={this.addText}
-                        className={classes.text}
-                        placeholder="Express Your Thoughts.."
-                        onFocus={()=>{this.setState({open: false})}}
-                        size='medium'
-                        margin="normal"
-                        /> */}
-                        <ContentEditable
-                            ref={this.text}
-                            html={this.state.text === ''?this.state.placeholder:this.state.text}
-                            onChange={this.contentEditableOnChange}
-                            disabled={false}
-                            className={classes.text}
-                            onKeyDown={this.addText}
-                            onBlur={() => {
-                                this.setState({
-                                    placeholder: placeholder
-                                })
-                            }}
-                            onFocus={()=>{
-                                this.setState({
-                                    open: false,
-                                    placeholder: ''
-                                })
-                            }}
+                            <DeleteIcon />
+                        </IconButton>
+                    </Popover>
+                    <input 
+                    style={{display: 'none'}} 
+                    type='file' 
+                    ref={this.fileSelector} 
+                    onChange={this.handleFileChange}
+                    accept='image/png, image/jpg, image/jpeg, image/gif' />
+                    <Dialog id='video' open={this.state.videoDialog} onClose={this.handleCloseVideoDialog}>
+                        <DialogTitle>
+                            Paste Video URL from Youtube/Vimeo
+                        </DialogTitle>
+                        <DialogContent>
+                        <TextField
+                            error={this.state.videoLinkError}
+                            autoFocus
+                            id="videoLink"
+                            margin="dense"
+                            onChange={this.onChange}
+                            label="Video URL"
+                            fullWidth
+                            helperText={this.state.videoLinkError?'Invalid URL':''}
                         />
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={this.handleCloseVideoDialog} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={this.addVideo} color="primary">
+                            Add Video
+                        </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Dialog fullScreen open={this.state.codeDialog} onClose={this.handleCloseCodeDialog} TransitionComponent={Transition}>
+                        <AppBar className={classes.appBar}>
+                            <Toolbar>
+                                <IconButton edge="start" color="inherit" onClick={this.handleCloseCodeDialog} aria-label="close">
+                                <CloseIcon />
+                                </IconButton>
+                                <Typography variant="h6" className={classes.title}>
+                                Enter Your Code
+                                </Typography>
+                                <Button autoFocus color="inherit" onClick={this.addCode}>
+                                Add Code
+                                </Button>
+                            </Toolbar>
+                        </AppBar>
+                        <DialogContent style={{margin:'0.2rem'}} >
+                            <TextareaAutosize
+                            autoFocus
+                            rowsMin={30}
+                            placeholder="Code"
+                            id='code'
+                            className={classes.codeArea}
+                            onChange={this.onChange}
+                            />
+                        </DialogContent>
+                    </Dialog>
+                    <p style={{color: Colors.grey}}>Press Ctrl+s To save in draft</p>
+                    <Grid container spacing={0}>
+                        <Grid item xs={2} sm={1}>
+                        </Grid>
+                        <Grid item xs={10} sm={11}>
+                        <input
+                        placeholder="Title"
+                        id='title'
+                        value={this.state.title}
+                        onChange={this.onChange}
+                        style={{
+                            fontSize: '34px', 
+                            fontWeight: 700,
+                            width: '100%',
+                            border: 0,
+                            outline: 'none'
+                        }}
+                        />
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Grid container spacing ={0}>
-                    <Grid item xs={2} sm={1}>
+                    <Grid container spacing ={0}>
+                        <Grid item xs={2} sm={1}>
+                        </Grid>
+                        <Grid item xs={10} sm={11}>
+                            {this.state.ui}
+                        </Grid>
                     </Grid>
-                    <Grid item xs={10} sm={11}>
-                        {this.state.uiDown}
+                    <br/>
+                    <Grid container spacing ={0}>
+                        <Grid item xs={2} sm={1}>
+                        </Grid>
+                        <Grid item xs={10} sm={11}>
+                            <Paper elevation={0} className={classes.paper}>
+                                <StyledToggleButtonGroup
+                                size="small"
+                                value={this.state.textType}
+                                exclusive
+                                onChange={this.handleTextType}
+                                aria-label="text type"
+                                >
+                                    <ToggleButton value="quote" title="Centered">
+                                        <FormatQuoteIcon />
+                                    </ToggleButton>
+                                    <ToggleButton value="heading" title="Heading">
+                                        <TextFieldsIcon />
+                                    </ToggleButton>
+                                    <ToggleButton value="subHeading" title="Sub Heading">
+                                        <TextFieldsIcon style={{fontSize: '15px'}} />
+                                    </ToggleButton>
+                                </StyledToggleButtonGroup>
+                                <Divider orientation="vertical" className={classes.divider} />
+                                <StyledToggleButtonGroup
+                                    size="small"
+                                    value={this.state.textStyle}
+                                    onChange={this.handleTextStyle}
+                                    aria-label="text style"
+                                    >
+                                    <ToggleButton 
+                                    disabled={this.state.textType?true:false} 
+                                    value="bold" 
+                                    title="bold">
+                                        <FormatBoldIcon />
+                                    </ToggleButton>
+                                    <ToggleButton 
+                                    disabled={this.state.textType?true:false}
+                                    value="italic" 
+                                    title="italic">
+                                        <FormatItalicIcon />
+                                    </ToggleButton>
+                                    <ToggleButton 
+                                    disabled={this.state.textType?true:false}
+                                    value="link" 
+                                    title="link">
+                                        <LinkIcon />
+                                    </ToggleButton>
+                                </StyledToggleButtonGroup>
+                                <TextField
+                                    placeholder='Paste Your Link'
+                                    fullWidth
+                                    className={classes.url}
+                                />
+                            </Paper>
+                        </Grid>
                     </Grid>
-                </Grid>
-                {/* <Button variant='contained' onClick={this.testing} >test</Button> */}
-            </Container>
+                    <br/>
+                    <Grid container spacing={0}>
+                        <Grid item xs={2} sm={1}>
+                            <SpeedDial
+                            className={classes.speedDial}
+                            ariaLabel="Add Image, Video etc.."
+                            icon={<SpeedDialIcon />}
+                            FabProps={{ 
+                                size: "small", 
+                                style: { 
+                                    backgroundColor: Colors.blue,
+                                    width: '36px'
+                            }}}
+                            onClick={this.handleToggle}
+                            open={this.state.open}
+                            direction='down'
+                            >
+                                <SpeedDialAction
+                                    icon={<PlayIcon/>}
+                                    tooltipTitle="Add YouTube, Vimeo Video"
+                                    onClick={this.handleOpenVideoDialog}
+                                />
+                                <SpeedDialAction
+                                    icon={<WallpaperIcon/>}
+                                    tooltipTitle="Add Image"
+                                    onClick={this.handleFileSelect}
+                                />
+                                <SpeedDialAction
+                                    icon={<HorizIcon/>}
+                                    tooltipTitle="Add Break Point"
+                                    onClick={this.addBreakPoint}
+                                />
+                                <SpeedDialAction
+                                    icon={<CodeIcon/>}
+                                    tooltipTitle="Add Code"
+                                    onClick={this.handleOpenCodeDialog}
+                                />
+                            </SpeedDial>
+                        </Grid>
+                        <Grid item xs={10} sm={11}>
+                            {/* <TextareaAutosize
+                            id='text'
+                            ref={this.text}
+                            value={this.state.text}
+                            onChange={this.onChange}
+                            onKeyDown={this.addText}
+                            className={classes.text}
+                            placeholder="Express Your Thoughts.."
+                            onFocus={()=>{this.setState({open: false})}}
+                            size='medium'
+                            margin="normal"
+                            /> */}
+                            <ContentEditable
+                                ref={this.text}
+                                html={this.state.text === ''?this.state.placeholder:this.state.text}
+                                onChange={this.contentEditableOnChange}
+                                disabled={false}
+                                className={classes.text}
+                                onKeyDown={this.addText}
+                                onBlur={() => {
+                                    this.setState({
+                                        placeholder: placeholder
+                                    })
+                                }}
+                                onFocus={()=>{
+                                    this.setState({
+                                        open: false,
+                                        placeholder: ''
+                                    })
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing ={0}>
+                        <Grid item xs={2} sm={1}>
+                        </Grid>
+                        <Grid item xs={10} sm={11}>
+                            {this.state.uiDown}
+                        </Grid>
+                    </Grid>
+                </Container>
+                <Fab onClick={this.publishBlog} variant='extended' color='primary' title='publish blog' className={classes.fab}>
+                    <SpeedDialIcon style={{
+                        marginRight: '10px'
+                    }}/> Publish Blog
+                </Fab>
+            </div>
         );
     }
 }

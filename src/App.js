@@ -15,6 +15,7 @@ import BlogView from './Components/BlogView';
 import UserView from './Components/UserView';
 import Comments from './Components/Comments';
 import Search from './Components/Search';
+import SaveBlog from './Components/SaveBlog';
 import axios from 'axios';
 
 axios.get('/getCsrfToken').then((response) => {
@@ -96,6 +97,12 @@ class App extends React.Component {
               render={(routeProps)=>{
                 return(
                   <Publish handleOpen={this.handleOpen} isMobile={isMobile} {...routeProps}/>
+              )}}
+              />
+              <Route exact path={ClientUrls.publishBlog}
+              render={(routeProps)=>{
+                return(
+                  <SaveBlog handleOpen={this.handleOpen} isMobile={isMobile} {...routeProps}/>
               )}}
               />
               <Route exact path={ClientUrls.view}

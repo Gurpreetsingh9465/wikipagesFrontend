@@ -7,7 +7,8 @@ export const ClientUrls = {
     'view': '/:user/:id/:title',
     'userView': '/:id',
     'comments': '/:blogId/comments',
-    'search': '/search/:query'
+    'search': '/search/:query',
+    'publishBlog': '/publish/:id/save'
 };
 
 export const ServerUrl = {
